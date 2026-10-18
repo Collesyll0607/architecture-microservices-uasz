@@ -1,0 +1,35 @@
+# =====================================================================
+# GITIGNORE - PROJET MICROSERVICES UASZ (L3 L2I)
+# =====================================================================
+
+# Fichiers de compilation Java & Maven
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Environnements de développement (IDE)
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.metadata/
+
+# Logs et fichiers temporaires
+*.log
+*.tmp
+*.bak
+
+# Fichiers d'installation et archives volumineuses (rejetés par GitHub > 100 Mo)
+*.exe
+*.zip
+*.rar
+*.7z
+
+# Système d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini

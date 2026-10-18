@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Espace Conservateur - Dashboard de Gestion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-5 flex-grow-1">
+
+        <!-- En-tête Conservateur -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div>
+                <span class="badge px-3 py-2 rounded-pill mb-1" style="background: var(--casa-ochre); color: white;">
+                    <i class="bi bi-shield-lock me-1"></i> ESPACE CONSERVATEUR & ADMINISTRATION
+                </span>
+                <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">
+                    Tableau de Bord du Patrimoine de Ziguinchor
+                </h2>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/patrimoines/nouveau}" class="btn btn-casa-ochre btn-sm rounded-pill px-3 shadow-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Nouveau Site
+                </a>
+                <a th:href="@{/patrimoines}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                    <i class="bi bi-eye me-1"></i> Catalogue Public
+                </a>
+            </div>
+        </div>
+
+        <!-- Alertes -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-success border-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-danger border-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Cartes Statistiques Clés (Harmonisées aux teintes Casamance) -->
+        <div class="row g-3 mb-5">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: linear-gradient(135deg, var(--casa-green-deep), var(--casa-green-mangrove));">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Sites Répertoriés</div>
+                            <h2 class="fw-bold mb-0 mt-1" th:text="${totalSites}">4</h2>
+                        </div>
+                        <i class="bi bi-bank fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: linear-gradient(135deg, #1f6b52, #2ecc71);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Guides Actifs</div>
+                            <h2 class="fw-bold mb-0 mt-1" th:text="${totalGuidesActifs}">1</h2>
+                        </div>
+                        <i class="bi bi-compass fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: linear-gradient(135deg, var(--casa-ochre), var(--casa-terracotta));">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Guides en Attente</div>
+                            <h2 class="fw-bold mb-0 mt-1" th:text="${totalGuidesEnAttente}">0</h2>
+                        </div>
+                        <i class="bi bi-person-check fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-4 rounded-4 text-white" style="background: linear-gradient(135deg, #c0392b, #e74c3c);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-white-50 small text-uppercase fw-semibold">Avis Signalés</div>
+                            <h2 class="fw-bold mb-0 mt-1" th:text="${totalAvisSignales}">0</h2>
+                        </div>
+                        <i class="bi bi-flag-fill fs-1 text-white-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. DOSSIERS DE CANDIDATURE DES GUIDES (ÉVALUATION DU CONSERVATEUR) -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white mb-5">
+            <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h5 class="fw-bold mb-0" style="color: var(--casa-green-deep);">
+                        <i class="bi bi-person-badge-fill text-warning me-2"></i>Dossiers de Candidature des Guides en Attente
+                    </h5>
+                    <small class="text-secondary">Évaluez les compétences linguistiques, l'expérience et la maîtrise du terrain avant d'accréditer un guide.</small>
+                </div>
+                <span class="badge rounded-pill bg-warning-subtle text-dark border px-3 py-2 fw-semibold" 
+                      th:text="${#lists.size(guidesEnAttente) + ' candidature(s) à examiner'}">0</span>
+            </div>
+            <div class="card-body p-4">
+                <!-- État sans candidature -->
+                <div th:if="${#lists.isEmpty(guidesEnAttente)}" class="p-5 text-center text-muted">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Tous les dossiers sont traités !</h5>
+                    <p class="text-secondary mb-0">Aucune nouvelle candidature de guide n'est actuellement en attente d'évaluation.</p>
+                </div>
+
+                <!-- Liste des dossiers de candidature détaillés -->
+                <div th:if="${not #lists.isEmpty(guidesEnAttente)}" class="d-flex flex-column gap-4">
+                    <div th:each="g : ${guidesEnAttente}" class="border rounded-4 p-4 shadow-sm bg-light-subtle">
+                        <!-- En-tête de la candidature -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                                     style="width: 52px; height: 52px; background: linear-gradient(135deg, var(--casa-green-deep), var(--casa-ochre)); font-size: 1.3rem;">
+                                    <span th:text="${#strings.substring(g.prenom ?: g.username, 0, 1)}">G</span>
+                                </div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <h5 class="fw-bold mb-0 text-dark" th:text="${g.nomComplet}">Prénom Nom</h5>
+                                        <span class="badge bg-secondary-subtle text-secondary border">@<span th:text="${g.username}">username</span></span>
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En attente d'évaluation</span>
+                                    </div>
+                                    <div class="small text-muted mt-1">
+                                        <i class="bi bi-envelope me-1"></i><a th:href="'mailto:' + ${g.email}" class="text-secondary text-decoration-none me-3" th:text="${g.email}">email</a>
+                                        <span th:if="${g.telephone}"><i class="bi bi-telephone me-1"></i><span th:text="${g.telephone}">+221 ...</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Expérience & date -->
+                            <div class="text-md-end">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6 rounded-pill">
+                                    <i class="bi bi-award-fill me-1"></i> <strong th:text="${g.anneesExperience != null ? g.anneesExperience : 1}">1</strong> an(s) d'expérience terrain
+                                </span>
+                                <div class="small text-muted mt-1" th:if="${g.dateInscription != null}">
+                                    Candidature soumise le <span th:text="${#temporals.format(g.dateInscription, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grille des critères d'évaluation -->
+                        <div class="row g-3 my-2">
+                            <!-- 1. Langues parlées -->
+                            <div class="col-lg-4 col-md-6">
+                                <div class="p-3 bg-white rounded-3 border h-100">
+                                    <h6 class="fw-bold small text-uppercase text-secondary mb-2">
+                                        <i class="bi bi-translate text-primary me-1"></i> Langues Maîtrisées
+                                    </h6>
+                                    <div th:if="${g.langues != null and !#strings.isEmpty(g.langues)}" class="d-flex flex-wrap gap-1">
+                                        <span th:each="lang : ${#strings.arraySplit(g.langues, ',')}" 
+                                              class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1">
+                                            <i class="bi bi-chat-dots me-1"></i><span th:text="${#strings.trim(lang)}">Langue</span>
+                                        </span>
+                                    </div>
+                                    <span th:if="${g.langues == null or #strings.isEmpty(g.langues)}" class="text-muted small fst-italic">
+                                        Aucune langue précisée
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- 2. Circuits maîtrisés -->
+                            <div class="col-lg-4 col-md-6">
+                                <div class="p-3 bg-white rounded-3 border h-100">
+                                    <h6 class="fw-bold small text-uppercase text-secondary mb-2">
+                                        <i class="bi bi-compass text-success me-1"></i> Circuits Maîtrisés
+                                    </h6>
+                                    <div th:if="${g.circuitsMaitrises != null and !#strings.isEmpty(g.circuitsMaitrises)}" class="d-flex flex-wrap gap-1">
+                                        <span th:each="c : ${#strings.arraySplit(g.circuitsMaitrises, ',')}" 
+                                              class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1">
+                                            <i class="bi bi-signpost-2 me-1"></i><span th:text="${#strings.trim(c)}">Circuit</span>
+                                        </span>
+                                    </div>
+                                    <span th:if="${g.circuitsMaitrises == null or #strings.isEmpty(g.circuitsMaitrises)}" class="text-muted small fst-italic">
+                                        Aucun circuit sélectionné
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Sites patrimoniaux de prédilection -->
+                            <div class="col-lg-4 col-md-12">
+                                <div class="p-3 bg-white rounded-3 border h-100">
+                                    <h6 class="fw-bold small text-uppercase text-secondary mb-2">
+                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> Sites de Prédilection
+                                    </h6>
+                                    <div th:if="${g.sitesMaitrises != null and !#strings.isEmpty(g.sitesMaitrises)}" class="d-flex flex-wrap gap-1">
+                                        <span th:each="s : ${#strings.arraySplit(g.sitesMaitrises, ',')}" 
+                                              class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1">
+                                            <i class="bi bi-bank me-1"></i><span th:text="${#strings.trim(s)}">Site</span>
+                                        </span>
+                                    </div>
+                                    <span th:if="${g.sitesMaitrises == null or #strings.isEmpty(g.sitesMaitrises)}" class="text-muted small fst-italic">
+                                        Aucun site patrimonial sélectionné
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Biographie & Motivation -->
+                        <div class="mb-3" th:if="${g.biographie != null and !#strings.isEmpty(g.biographie)}">
+                            <div class="p-3 bg-white rounded-3 border">
+                                <h6 class="fw-bold small text-uppercase text-secondary mb-1">
+                                    <i class="bi bi-chat-quote-fill text-warning me-1"></i> Motivation & Présentation du Candidat
+                                </h6>
+                                <p class="mb-0 text-dark small fst-italic" th:text="${g.biographie}">Biographie...</p>
+                            </div>
+                        </div>
+
+                        <!-- Décision du Conservateur -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <form th:action="@{/conservateur/guides/rejeter/{id}(id=${g.id})}" method="post"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir rejeter la candidature de ce guide ?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                    <i class="bi bi-x-circle me-1"></i> Rejeter la candidature
+                                </button>
+                            </form>
+                            <form th:action="@{/conservateur/guides/valider/{id}(id=${g.id})}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Valider & Accréditer ce Guide
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- 2. PLANIFICATION D'UNE VISITE GUIDÉE -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h5 class="fw-bold mb-0" style="color: var(--casa-green-deep);">
+                            <i class="bi bi-calendar-plus text-success me-2"></i>Planifier une Nouvelle Visite
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/conservateur/visites/planifier}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">Site Patrimonial <span class="text-danger">*</span></label>
+                                <select name="patrimoineId" class="form-select filter-input" required>
+                                    <option value="">Sélectionner le site</option>
+                                    <option th:each="p : ${tousPatrimoines != null ? tousPatrimoines : patrimoines}" th:value="${p.id}" th:text="${p.nom + ' (' + p.code + ')'}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">Guide Certifié Assigné <span class="text-danger">*</span></label>
+                                <select name="guideId" class="form-select filter-input" required>
+                                    <option value="">Sélectionner un guide validé</option>
+                                    <option th:each="g : ${guidesValides}" th:value="${g.id}" th:text="${(g.prenom != null ? g.prenom + ' ' + g.nom : g.username) + ' (@' + g.username + ') - ' + (g.anneesExperience != null ? g.anneesExperience : 1) + ' an(s) exp.'}"></option>
+                                </select>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label fw-semibold small text-secondary">Date & Heure <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="dateHeure" class="form-control filter-input" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="form-label fw-semibold small text-secondary">Places max</label>
+                                    <input type="number" name="placesMax" class="form-control filter-input" value="15" min="1" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="form-label fw-semibold small text-secondary">Tarif (FCFA)</label>
+                                    <input type="number" name="tarif" class="form-control filter-input" value="2000" min="0" step="500" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-casa-primary btn-sm rounded-pill px-4">
+                                <i class="bi bi-calendar-check me-1"></i> Publier la Visite
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. GUIDES CERTIFIÉS EN ACTIVITÉ -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0" style="color: var(--casa-green-deep);">
+                            <i class="bi bi-check2-circle text-success me-2"></i>Guides Certifiés en Activité
+                        </h5>
+                        <span class="badge rounded-pill bg-success-subtle text-success border px-3" th:text="${#lists.size(guidesValides)}">0</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div th:if="${#lists.size(guidesValides) > 0}" class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light small text-uppercase">
+                                    <tr>
+                                        <th>Guide</th>
+                                        <th>Langues & Exp.</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="gv : ${guidesValides}">
+                                        <td>
+                                            <strong th:text="${gv.nomComplet}">Prénom Nom</strong><br>
+                                            <small class="text-muted" th:text="${gv.email}">email</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 mb-1">
+                                                <i class="bi bi-award me-1"></i><span th:text="${(gv.anneesExperience != null ? gv.anneesExperience : 1) + ' an(s)'}"></span>
+                                            </span><br>
+                                            <small class="text-secondary" th:text="${gv.langues != null ? gv.langues : 'Français'}">Langues</small>
+                                        </td>
+                                        <td>
+                                            <form th:action="@{/conservateur/guides/rejeter/{id}(id=${gv.id})}" method="post"
+                                                  onsubmit="return confirm('Désactiver ce guide certifié ? Il ne pourra plus être assigné à des visites.');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill" title="Désactiver l'accréditation">
+                                                    <i class="bi bi-pause-circle me-1"></i> Suspendre
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:if="${#lists.size(guidesValides) == 0}" class="p-4 text-center text-muted">
+                            <i class="bi bi-info-circle fs-3 text-secondary d-block mb-1"></i>
+                            Aucun guide n'est encore accrédité sur la plateforme.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MODÉRATION DES AVIS SIGNALÉS & GESTION DES LITIGES TOURISTES -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white mb-4">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0 text-danger">
+                        <i class="bi bi-shield-fill-exclamation me-2"></i>Signalements & Litiges Visiteurs en Attente
+                    </h5>
+                    <small class="text-secondary">Traitement des réclamations sur les visites effectuées et modération des avis signalés.</small>
+                </div>
+                <span class="badge rounded-pill bg-danger-subtle text-danger border px-3 py-2 fw-semibold" 
+                      th:text="${#lists.size(avisSignales) + ' incident(s) à instruire'}">0</span>
+            </div>
+            <div class="card-body p-0">
+                <div th:if="${#lists.size(avisSignales) > 0}" class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small text-uppercase">
+                            <tr>
+                                <th>Nature de l'Alerte</th>
+                                <th>Site / Visite & Guide</th>
+                                <th>Touriste Déclarant</th>
+                                <th>Note</th>
+                                <th>Détail du Problème / Commentaire</th>
+                                <th>Médiation & Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="a : ${avisSignales}" th:classappend="${a.estLitige ? 'table-danger-subtle' : ''}">
+                                <td>
+                                    <span th:if="${a.estLitige}" class="badge bg-danger text-white mb-1">
+                                        <i class="bi bi-exclamation-octagon-fill me-1"></i> Litige Visite
+                                    </span>
+                                    <span th:if="${!a.estLitige}" class="badge bg-warning text-dark mb-1">
+                                        <i class="bi bi-flag-fill me-1"></i> Avis Signalé
+                                    </span>
+                                    <div th:if="${a.motifLitige != null}" class="small fw-semibold text-danger" th:text="${a.motifLitige}">Motif</div>
+                                </td>
+                                <td>
+                                    <strong class="text-dark d-block" 
+                                            th:text="${a.patrimoine != null ? a.patrimoine.nom : (a.visite != null and a.visite.circuit != null ? a.visite.circuit.titre : 'Visite Guidée')}">Site</strong>
+                                    <small th:if="${a.guide != null}" class="text-secondary d-block">
+                                        <i class="bi bi-compass text-success me-1"></i>Guide : <strong th:text="${a.guide.nomComplet}">Guide</strong>
+                                    </small>
+                                    <small th:if="${a.dateCreation != null}" class="text-muted" style="font-size: 0.75rem;">
+                                        Signalé le <span th:text="${#temporals.format(a.dateCreation, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                    </small>
+                                </td>
+                                <td>
+                                    <strong class="d-block text-dark small" th:text="${a.auteur != null ? a.auteur.nomComplet : 'Anonyme'}">Touriste</strong>
+                                    <small class="text-muted" th:text="${a.auteur != null ? a.auteur.email : ''}">email</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning text-dark fw-bold">
+                                        <span th:text="${a.note}">1</span> ★
+                                    </span>
+                                </td>
+                                <td class="small text-secondary" style="max-width: 350px;">
+                                    <p class="mb-0" th:text="${a.commentaire}">Description des faits...</p>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        <a th:href="@{/avis/moderation/{id}/approuver(id=${a.id})}" 
+                                           class="btn btn-outline-success btn-sm rounded-pill py-1 px-3" 
+                                           title="Marquer comme traité et résolu">
+                                            <i class="bi bi-check-circle me-1"></i> Régler / Résoudre
+                                        </a>
+                                        <a th:href="@{/avis/moderation/{id}/supprimer(id=${a.id})}" 
+                                           class="btn btn-outline-danger btn-sm rounded-pill py-1 px-3" 
+                                           title="Supprimer définitivement"
+                                           onclick="return confirm('Confirmer la suppression définitive de cet avis / réclamation ?');">
+                                            <i class="bi bi-trash me-1"></i> Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${#lists.size(avisSignales) == 0}" class="p-4 text-center text-muted">
+                    <i class="bi bi-shield-check fs-3 text-success d-block mb-1"></i>
+                    Aucun avis signalé ni litige ouvert actuellement. Les visites guidées se déroulent dans d'excellentes conditions !
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. HISTORIQUE DES LITIGES ET SIGNALEMENTS RÉSOLUS (ARCHIVES) -->
+        <div th:if="${litigesResolus != null and not #lists.isEmpty(litigesResolus)}" class="card border-0 shadow-sm rounded-4 bg-white mb-4">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0 text-success">
+                        <i class="bi bi-check2-all me-2"></i>Historique des Litiges & Signalements Résolus
+                    </h6>
+                    <small class="text-secondary">Dossiers de médiation traités et clôturés par le Conservateur.</small>
+                </div>
+                <span class="badge rounded-pill bg-success-subtle text-success border px-3" 
+                      th:text="${#lists.size(litigesResolus) + ' dossier(s) résolu(s)'}">0</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light small text-uppercase">
+                            <tr>
+                                <th>Date</th>
+                                <th>Site / Visite</th>
+                                <th>Guide</th>
+                                <th>Touriste Plaignant</th>
+                                <th>Motif du Litige</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="r : ${litigesResolus}">
+                                <td class="small text-muted" th:text="${#temporals.format(r.dateCreation, 'dd/MM/yyyy HH:mm')}">Date</td>
+                                <td class="small fw-semibold text-dark" th:text="${r.patrimoine != null ? r.patrimoine.nom : (r.visite != null and r.visite.circuit != null ? r.visite.circuit.titre : 'Visite Guidée')}">Site</td>
+                                <td class="small text-secondary" th:text="${r.guide != null ? r.guide.nomComplet : '-'}">Guide</td>
+                                <td class="small" th:text="${r.auteur != null ? r.auteur.nomComplet : 'Anonyme'}">Touriste</td>
+                                <td class="small text-danger fw-semibold" th:text="${r.motifLitige != null ? r.motifLitige : 'Signalement modéré'}">Motif</td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Résolu & Clôturé
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${patrimoine.nom} + ' - Ziguinchor Tourisme'">Détail du Patrimoine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-5 flex-grow-1">
+
+        <!-- Messages Flash d'alerte -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-success border-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2 fs-5 align-middle"></i>
+            <span th:text="${successMessage}" class="fw-medium"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Fil d'ariane & Bouton retour -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <a th:href="@{/patrimoines}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Retour au catalogue
+            </a>
+            <div class="btn-group btn-group-sm" sec:authorize="hasAnyAuthority('ROLE_CONSERVATEUR', 'ROLE_ADMIN')">
+                <a th:href="@{/patrimoines/modifier/{id}(id=${patrimoine.id})}" class="btn btn-outline-warning">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </a>
+                <a th:href="@{/patrimoines/supprimer/{id}(id=${patrimoine.id})}" 
+                   onclick="return confirm('Confirmer la suppression de ce patrimoine ?');"
+                   class="btn btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i> Supprimer
+                </a>
+            </div>
+        </div>
+
+        <!-- Grande Carte Fiche Détail -->
+        <div class="card border-0 shadow-sm overflow-hidden mb-5 rounded-4 bg-white">
+            <img th:if="${patrimoine.imageUrl != null and !#strings.isEmpty(patrimoine.imageUrl)}" 
+                 th:src="${patrimoine.imageUrl}" class="w-100" style="max-height: 420px; object-fit: cover;" th:alt="${patrimoine.nom}">
+            
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <span class="badge px-3 py-2 rounded-pill fs-6 me-2" style="background: var(--casa-green-mangrove);" th:text="${patrimoine.categorie.libelle}">Catégorie</span>
+                        <span class="badge bg-light text-secondary border font-monospace fs-6" th:text="${patrimoine.code}">CODE</span>
+                        
+                        <!-- Moyenne 5 étoiles -->
+                        <span class="ms-3 align-middle" th:if="${noteMoyenne != null}">
+                            <i class="bi bi-star-fill text-warning fs-5"></i>
+                            <strong class="fs-5 text-dark ms-1" th:text="${noteMoyenne}">4.5</strong>
+                            <small class="text-muted">/ 5 (<span th:text="${totalAvis}">2</span> avis)</small>
+                        </span>
+                        <span class="ms-3 text-muted small align-middle" th:unless="${noteMoyenne != null}">
+                            <i class="bi bi-star text-muted"></i> Pas encore d'avis
+                        </span>
+                    </div>
+
+                    <div class="text-end">
+                        <small class="text-muted d-block" style="font-size: 0.75rem; text-transform: uppercase;">Tarif d'accès</small>
+                        <span class="fs-4 fw-bold" style="color: var(--casa-ochre);" 
+                              th:text="${patrimoine.tarifEntree == 0.0 ? 'Entrée Gratuite' : #numbers.formatDecimal(patrimoine.tarifEntree, 0, 'POINT', 0, 'POINT') + ' FCFA'}">
+                        </span>
+                    </div>
+                </div>
+
+                <h1 class="display-6 fw-bold mb-3" style="font-family: var(--font-heading); color: var(--casa-green-deep);" th:text="${patrimoine.nom}">Nom du Patrimoine</h1>
+                
+                <p class="text-muted mb-4 fs-6">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                    <span th:text="${patrimoine.quartier != null ? patrimoine.quartier + ' - ' : ''}"></span>
+                    <span th:text="${patrimoine.adresse}">Adresse complète</span>
+                </p>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-7">
+                        <h4 class="fw-bold mb-2" style="color: var(--casa-green-deep);">Description du Site</h4>
+                        <p class="text-secondary lh-lg" th:text="${patrimoine.description}">Description détaillée du patrimoine...</p>
+
+                        <h4 class="fw-bold mb-2 mt-4" style="color: var(--casa-green-deep);" th:if="${patrimoine.historique != null and !#strings.isEmpty(patrimoine.historique)}">
+                            Histoire & Signification Culturelle
+                        </h4>
+                        <p class="text-secondary lh-lg" th:if="${patrimoine.historique != null and !#strings.isEmpty(patrimoine.historique)}" 
+                           th:text="${patrimoine.historique}">Historique...</p>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="p-4 rounded-4 shadow-sm" style="background: var(--casa-cream); border: 1px solid rgba(22, 56, 44, 0.08);">
+                            <h5 class="fw-bold mb-3" style="color: var(--casa-green-deep);">
+                                <i class="bi bi-info-circle-fill text-warning me-2"></i>Informations Pratiques
+                            </h5>
+                            <ul class="list-unstyled mb-4 text-secondary">
+                                <li class="mb-2">
+                                    <i class="bi bi-clock me-2 text-primary"></i> 
+                                    <strong>Horaires : </strong>
+                                    <span th:text="${patrimoine.horairesOuverture != null ? patrimoine.horairesOuverture : 'Accès libre'}">8h - 18h</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-people me-2 text-info"></i> 
+                                    <strong>Capacité d'accueil : </strong>
+                                    <span th:text="${patrimoine.capaciteAccueil != null ? patrimoine.capaciteAccueil + ' personnes' : 'Non limitée'}">150 personnes</span>
+                                </li>
+                                <li class="mb-2" th:if="${patrimoine.latitude != null and patrimoine.longitude != null}">
+                                    <i class="bi bi-pin-map me-2 text-danger"></i> 
+                                    <strong>Coordonnées GPS : </strong>
+                                    <span class="font-monospace small" th:text="${patrimoine.latitude + ', ' + patrimoine.longitude}">12.58, -16.27</span>
+                                </li>
+                            </ul>
+
+                            <div class="d-grid gap-2">
+                                <a th:if="${patrimoine.latitude != null and patrimoine.longitude != null}" 
+                                   th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${patrimoine.latitude} + ',' + ${patrimoine.longitude}}" 
+                                   target="_blank" class="btn btn-outline-success rounded-pill btn-sm">
+                                    <i class="bi bi-map-fill me-1"></i> Ouvrir dans Google Maps
+                                </a>
+                                <a th:href="@{/touriste/mes-reservations}" class="btn btn-casa-primary rounded-pill btn-sm">
+                                    <i class="bi bi-ticket-perforated me-1"></i> Réserver une Visite Guidée
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5">
+
+                <!-- SECTION AVIS & COMMENTAIRES -->
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h3 class="fw-bold mb-0" style="color: var(--casa-green-deep);">Avis de la Communauté</h3>
+                            <small class="text-muted">Partages d'expériences des visiteurs et touristes</small>
+                        </div>
+                        <span class="badge rounded-pill px-3 py-2 bg-success-subtle text-success border border-success-subtle" th:text="${totalAvis + ' avis vérifiés'}">0 avis</span>
+                    </div>
+
+                    <!-- Formulaire Dépôt Avis -->
+                    <div sec:authorize="isAuthenticated()" class="p-4 rounded-4 mb-4 bg-white border shadow-sm">
+                        <h5 class="fw-bold mb-3" style="color: var(--casa-green-deep);">
+                            <i class="bi bi-pencil-square text-warning me-2"></i>Laisser un avis & une note
+                        </h5>
+                        <form th:action="@{/avis/ajouter}" method="post">
+                            <input type="hidden" name="patrimoineId" th:value="${patrimoine.id}" />
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">Votre note sur 5 étoiles :</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check form-check-inline" th:each="i : ${#numbers.sequence(5, 1, -1)}">
+                                        <input class="form-check-input" type="radio" name="note" th:id="'star' + ${i}" th:value="${i}" th:checked="${i == 5}" required>
+                                        <label class="form-check-label fw-bold text-warning" th:for="'star' + ${i}">
+                                            <span th:text="${i}">5</span> ★
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">Votre commentaire ou retour d'expérience :</label>
+                                <textarea name="commentaire" class="form-control rounded-3" rows="3" placeholder="Racontez votre visite, la beauté des lieux, l'accueil..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-casa-primary btn-sm rounded-pill px-4">
+                                <i class="bi bi-send me-1"></i> Publier mon avis
+                            </button>
+                        </form>
+                    </div>
+
+                    <div sec:authorize="!isAuthenticated()" class="alert alert-light border rounded-3 p-3 mb-4 text-center">
+                        <i class="bi bi-box-arrow-in-right me-1 text-primary"></i> 
+                        Pour partager votre avis et attribuer une note, veuillez <a th:href="@{/login}" class="fw-bold text-decoration-none">vous connecter</a>.
+                    </div>
+
+                    <!-- Liste des avis -->
+                    <div th:if="${avisList != null and #lists.size(avisList) > 0}" class="d-flex flex-column gap-3">
+                        <div class="card border-0 shadow-sm p-4 rounded-4 bg-white" th:each="a : ${avisList}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong class="text-dark" th:text="${a.auteur != null ? a.auteur.prenom + ' ' + a.auteur.nom : (a.utilisateur != null ? a.utilisateur.prenom + ' ' + a.utilisateur.nom : 'Visiteur')}">Visiteur</strong>
+                                    <span class="text-muted small ms-2" th:if="${a.dateCreation != null}" th:text="${#temporals.format(a.dateCreation, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                </div>
+                                <div class="text-warning fw-bold fs-6">
+                                    <span th:each="star : ${#numbers.sequence(1, a.note)}">★</span>
+                                </div>
+                            </div>
+                            <p class="mb-2 text-secondary" th:text="${a.commentaire}">Commentaire...</p>
+                            <div class="text-end">
+                                <a th:href="@{/avis/signaler/{id}(id=${a.id})}" class="text-muted small text-decoration-none">
+                                    <i class="bi bi-flag me-1"></i> Signaler comme inapproprié
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${avisList == null or #lists.size(avisList) == 0}" class="text-center py-4 text-muted">
+                        <p class="mb-0">Soyez le premier voyageur à partager votre expérience sur ce site !</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

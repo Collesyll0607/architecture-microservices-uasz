@@ -1,0 +1,100 @@
+# =====================================================================
+# VARIANTE AVEC XAMPP MYSQL LOCAL (PORT 3306 SUR MACHINE HOTE)
+# =====================================================================
+
+services:
+  ms-patrimoine:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-patrimoine
+      dockerfile: Dockerfile
+    image: collesyll/patrimoines:v1
+    container_name: ms-patrimoine-container
+    restart: on-failure
+    ports:
+      - "8081:8081"
+      - "3001:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ms-circuit:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-circuit
+      dockerfile: Dockerfile
+    image: collesyll/circuits:v1
+    container_name: ms-circuit-container
+    restart: on-failure
+    depends_on:
+      - ms-patrimoine
+    ports:
+      - "8082:8082"
+      - "3002:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8082
+      MS_PATRIMOINE_URL: http://ms-patrimoine:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ms-evenement:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-evenement
+      dockerfile: Dockerfile
+    image: collesyll/evenements:v1
+    container_name: ms-evenement-container
+    restart: on-failure
+    ports:
+      - "8083:8083"
+      - "3003:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8083
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  ms-reservation:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-reservation
+      dockerfile: Dockerfile
+    image: collesyll/reservations:v1
+    container_name: ms-reservation-container
+    restart: on-failure
+    depends_on:
+      - ms-patrimoine
+      - ms-circuit
+      - ms-evenement
+    ports:
+      - "8084:8084"
+      - "3004:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8084
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  patrimoine-touristique-web:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/patrimoine-touristique-web
+      dockerfile: Dockerfile
+    image: collesyll/patrimoine-web:v1
+    container_name: patrimoine-web-container
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

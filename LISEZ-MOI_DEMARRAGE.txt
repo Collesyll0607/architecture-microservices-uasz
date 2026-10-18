@@ -1,0 +1,76 @@
+================================================================================
+UNIVERSITÉ ASSANE SECK DE ZIGUINCHOR (UASZ)
+UFR DES SCIENCES ET TECHNOLOGIES - DÉPARTEMENT INFORMATIQUE
+Licence 3 Informatique (L2I) - Année 2025-2026
+
+MODULE : DÉVELOPPEMENT D'APPLICATIONS ORIENTÉES SERVICES
+ENSEIGNANT : Dr Lamine FATY
+
+BINÔME D'ÉTUDIANTS :
+  • Collé SYLL        - Matricule : 202300489
+  • Ndeye Thiamba FAYE - Matricule : 202300488
+================================================================================
+
+BIENVENUE DANS LE DOSSIER DE REMISE DU PROJET & DES TRAVAUX PRATIQUES (DEVOIR NOTÉ)
+
+Ce dossier a été spécialement agencé pour vous permettre d'exécuter l'ensemble
+de l'écosystème microservices en 1 seul clic, sans aucune manipulation complexe.
+
+--------------------------------------------------------------------------------
+1. ORGANISATION DU DOSSIER
+--------------------------------------------------------------------------------
+├── 01_RAPPORT_ET_COMPTE_RENDU/   -> Le compte-rendu officiel (Word .docx et PDF HD)
+├── 02_MICROSERVICES_SOURCE/      -> Code source des 5 microservices et parent pom.xml
+├── 03_BASE_DE_DONNEES/           -> Script d'initialisation SQL complet (UTF-8)
+├── 04_SCRIPTS_EXECUTION/         -> Scripts de lancement automatique 1-clic (.bat et .sh)
+├── docker-compose.yml            -> Déploiement 100% autonome (base MySQL incluse)
+├── docker-compose-xampp.yml      -> Variante si vous utilisez le MySQL de XAMPP
+└── README.md                     -> Documentation technique détaillée
+
+--------------------------------------------------------------------------------
+2. COMMENT DÉMARRER LE PROJET ? (DEUX MÉTHODES AU CHOIX)
+--------------------------------------------------------------------------------
+
+MÉTHODE A : DÉMARRAGE 1-CLIC AVEC DOCKER (RECOMMANDÉ - ZÉRO CONFIGURATION REQUISE)
+  1. Ouvrez le dossier "04_SCRIPTS_EXECUTION".
+  2. Double-cliquez sur "1-DEMARRER-DOCKER.bat".
+  -> Le script compile et lance automatiquement le conteneur MySQL et les
+     5 microservices, puis ouvre votre navigateur sur http://localhost:8080 !
+
+  (Si vous préférez la ligne de commande, ouvrez un terminal à la racine et tapez :
+   docker compose up --build -d)
+
+MÉTHODE B : SI VOUS PRÉFÉREZ UTILISER VOTRE XAMPP MYSQL LOCAL (PORT 3306)
+  1. Lancez MySQL dans XAMPP et importez le fichier :
+     03_BASE_DE_DONNEES/init_clean_utf8_data.sql dans une base nommée "patrimoinedb".
+  2. Dans un terminal à la racine, tapez :
+     docker compose -f docker-compose-xampp.yml up --build -d
+
+--------------------------------------------------------------------------------
+3. ACCÈS AUX SERVICES & ENDPOINTS DE TEST
+--------------------------------------------------------------------------------
+• PORTAIL WEB UTILISATEUR :
+  http://localhost:8080
+
+• MICROSERVICE PATRIMOINE (Port 8081) - TP 1 & TP 2 :
+  GET http://localhost:8081/api/patrimoines
+  GET http://localhost:8081/api/patrimoines/1
+
+• MICROSERVICE CIRCUIT AVEC OPENFEIGN (Port 8082) - TP 2 :
+  GET http://localhost:8082/api/circuits/enrichis
+  GET http://localhost:8082/api/circuits/1/enrichi
+
+• MICROSERVICE ÉVÉNEMENT (Port 8083) :
+  GET http://localhost:8083/api/evenements
+
+• MICROSERVICE RÉSERVATION (Port 8084) :
+  GET http://localhost:8084/api/reservations
+
+--------------------------------------------------------------------------------
+4. POUR ARRÊTER LE CLUSTER
+--------------------------------------------------------------------------------
+Double-cliquez sur "04_SCRIPTS_EXECUTION/2-ARRETER-DOCKER.bat"
+ou tapez : docker compose down
+
+Merci pour vos précieux enseignements tout au long de ce module !
+================================================================================

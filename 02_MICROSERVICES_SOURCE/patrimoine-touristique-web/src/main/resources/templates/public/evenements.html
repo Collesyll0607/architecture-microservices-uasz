@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Événements Culturels - Ziguinchor & Casamance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-5 flex-grow-1">
+
+        <!-- Hero Header Événements -->
+        <div class="rounded-4 p-4 p-md-5 mb-5 shadow-sm text-white position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, rgba(22, 56, 44, 0.88), rgba(217, 119, 36, 0.82)), url('/images/casamance/alliance_francaise.jpg') center/cover no-repeat;">
+            <div class="position-relative" style="z-index: 2; max-width: 650px;">
+                <span class="badge px-3 py-2 rounded-pill mb-2" style="background: var(--casa-green-deep); color: white;">
+                    <i class="bi bi-calendar-event me-1"></i> AGENDA CULTUREL & MANIFESTATIONS
+                </span>
+                <h1 class="display-6 fw-bold mb-2" style="font-family: var(--font-heading);">
+                    Événements & Célébrations de Casamance
+                </h1>
+                <p class="mb-0 text-white-50 lead" style="font-size: 1.05rem;">
+                    Expositions artistiques, festivals de danses traditionnelles, ateliers d'artisanat et rencontres mémorielles au cœur de Ziguinchor.
+                </p>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-2 border-bottom d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle mb-1">Manifestations Officielles</span>
+                <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">
+                    Programme des Événements
+                </h2>
+            </div>
+            <a th:href="@{/}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                <i class="bi bi-arrow-left me-1"></i> Retour à l'accueil
+            </a>
+        </div>
+
+        <div th:if="${serviceIndisponible}" class="alert alert-warning rounded-3 shadow-sm mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Le microservice des événements (ms-evenement) est momentanément inaccessible.
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4" th:if="${#lists.size(evenements) > 0}">
+            <div class="col" th:each="e : ${evenements}">
+                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+                    <div style="height: 160px; position: relative; overflow: hidden;">
+                        <img th:src="@{/images/casamance/bras_de_mer.jpg}" alt="Événement Casamance" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge bg-dark bg-opacity-75 text-white font-monospace px-3 py-1" th:text="${e.code}">CODE</span>
+                        </div>
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-semibold shadow-sm" th:text="${e.typeEvenement}">Type</span>
+                        </div>
+                    </div>
+                    <div class="p-4 d-flex flex-column flex-grow-1">
+                        <h4 class="fw-bold mb-2" style="font-family: var(--font-heading); color: var(--casa-green-deep);" th:text="${e.titre}">Titre</h4>
+                        <p class="text-secondary small mb-3 flex-grow-1" th:text="${e.description}">Description...</p>
+
+                        <div class="mb-3 text-muted small bg-light p-3 rounded-3">
+                            <div><i class="bi bi-geo-alt-fill text-danger me-1"></i> Lieu : <strong class="text-dark" th:text="${e.lieuPrecis}">Lieu</strong></div>
+                            <div class="mt-1">
+                                <i class="bi bi-cash me-1 text-success"></i> 
+                                Tarif : <strong class="text-dark" th:text="${e.tarifEntree == 0.0 ? 'Gratuit / Entrée Libre' : #numbers.formatDecimal(e.tarifEntree, 0, 'POINT', 0, 'POINT') + ' FCFA'}">Gratuit</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                <i class="bi bi-ticket-perforated me-1"></i>
+                                Places : <strong th:text="${e.placesMax - e.placesOccupees}">10</strong> / <span th:text="${e.placesMax}">50</span>
+                            </span>
+                            <a th:href="@{/touriste/mes-reservations}" class="btn btn-casa-ochre btn-sm rounded-pill px-3">
+                                Réserver sa place <i class="bi bi-ticket ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.size(evenements) == 0 and !serviceIndisponible}" class="card border-0 shadow-sm p-5 text-center bg-white rounded-4">
+            <i class="bi bi-calendar-x fs-1 text-muted mb-2"></i>
+            <h5 class="fw-bold text-secondary">Aucun événement planifié</h5>
+            <p class="text-muted mb-0">Revenez bientôt pour découvrir les prochaines manifestations culturelles de la région.</p>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

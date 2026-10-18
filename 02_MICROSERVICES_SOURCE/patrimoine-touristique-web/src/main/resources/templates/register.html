@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inscription - Patrimoine Touristique de Ziguinchor</title>
+    <!-- Bootstrap 5.3 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Thème Régional Casamance -->
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="auth-page-wrapper">
+
+    <div class="container auth-container-card p-0" style="max-width: 1100px;">
+        <div class="row g-0">
+            
+            <!-- PANNEAU GAUCHE : IMMERSION NATURELLE CASAMANCE -->
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="auth-visual-side" style="background-image: linear-gradient(145deg, rgba(22, 56, 44, 0.90) 0%, rgba(31, 81, 63, 0.82) 100%), url('/images/casamance/foret_casamance.jpg');">
+                    <!-- En-tête Badge -->
+                    <div class="auth-brand-badge">
+                        <i class="bi bi-tree-fill text-warning"></i>
+                        <span>Écotourisme & Culture Diola</span>
+                    </div>
+
+                    <!-- Contenu Central & Accroche -->
+                    <div class="my-auto py-4">
+                        <span class="badge rounded-pill px-3 py-2 mb-3" style="background: var(--casa-ochre); color: white; letter-spacing: 0.5px;">
+                            COMMUNAUTÉ DU PATRIMOINE
+                        </span>
+                        <h2 class="display-6 fw-bold mb-3" style="font-family: var(--font-heading); line-height: 1.25;">
+                            Rejoignez l'Aventure en Casamance
+                        </h2>
+                        <p class="lead mb-4" style="color: rgba(255, 255, 255, 0.9); font-size: 1rem;">
+                            Créez votre compte en quelques instants pour planifier vos escapades entre terre et eau, obtenir vos pass QR de visite ou valoriser vos compétences de guide local.
+                        </p>
+
+                        <!-- Avantages membres -->
+                        <div class="d-flex flex-column gap-3 text-white-50 small mb-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white bg-opacity-25 p-2 text-white">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                                <span class="text-white">Réservations directes auprès des sites patrimoniaux et circuits fluviaux.</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white bg-opacity-25 p-2 text-white">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                                <span class="text-white">Validation certifiée et génération instantanée de billets numériques.</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-white bg-opacity-25 p-2 text-white">
+                                    <i class="bi bi-check-lg"></i>
+                                </div>
+                                <span class="text-white">Espace dédié pour les guides professionnels de la région.</span>
+                            </div>
+                        </div>
+
+                        <!-- Citation inspirante -->
+                        <div class="auth-quote-card">
+                            <p class="fst-italic mb-1 text-white" style="font-size: 0.92rem;">
+                                « De Mlomp à Carabane, la mémoire des ancêtres veille sur la beauté éternelle de nos paysages. »
+                            </p>
+                            <small class="text-warning fw-semibold">— Patrimoine de Ziguinchor</small>
+                        </div>
+                    </div>
+
+                    <!-- Bas de panneau -->
+                    <div class="pt-3 border-top border-white-50 text-white-50 small text-center">
+                        Plateforme Académique UASZ — Génie Logiciel
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANNEAU DROIT : FORMULAIRE D'INSCRIPTION -->
+            <div class="col-lg-7">
+                <div class="auth-form-side p-4 p-md-5">
+                    
+                    <!-- Titre & Entête -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge rounded-pill bg-success-subtle text-success px-3 py-1 fw-semibold">Création de profil</span>
+                            <span class="text-muted small">• Gratuit et immédiat</span>
+                        </div>
+                        <h2 class="fw-bold mb-1" style="font-family: var(--font-heading); color: var(--casa-green-deep);">
+                            Inscrivez-vous sur le portail
+                        </h2>
+                        <p class="text-muted small">Remplissez vos informations pour accéder à tous les services.</p>
+                    </div>
+
+                    <!-- Formulaire d'inscription -->
+                    <form th:action="@{/register}" th:object="${inscription}" method="post">
+                        
+                        <!-- 1. Choix du Rôle (Cartes interactives modernes) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-secondary d-block mb-2">
+                                Vous souhaitez vous inscrire comme :
+                            </label>
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <input type="radio" class="btn-check" name="role" id="roleTouriste" value="ROLE_TOURISTE" th:field="*{role}" checked>
+                                    <label class="role-picker-card w-100" for="roleTouriste">
+                                        <div class="role-picker-icon">
+                                            <i class="bi bi-person-walking"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark small">Touriste / Visiteur</strong>
+                                            <span class="text-muted" style="font-size: 0.78rem;">Découvrir et réserver</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="radio" class="btn-check" name="role" id="roleGuide" value="ROLE_GUIDE" th:field="*{role}">
+                                    <label class="role-picker-card w-100" for="roleGuide">
+                                        <div class="role-picker-icon">
+                                            <i class="bi bi-compass"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark small">Guide Professionnel</strong>
+                                            <span class="text-muted" style="font-size: 0.78rem;">Accompagner et guider</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="text-danger small mt-1" th:errors="*{role}"></div>
+                        </div>
+
+                        <!-- 2. Prénom & Nom -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label fw-semibold small text-secondary">Prénom <span class="text-danger">*</span></label>
+                                <div class="auth-input-group mb-0">
+                                    <i class="bi bi-person auth-input-icon"></i>
+                                    <input type="text" th:field="*{prenom}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('prenom')} ? 'is-invalid'" 
+                                           placeholder="Ex: Ousmane" required>
+                                </div>
+                                <div class="text-danger small mt-1" th:errors="*{prenom}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label fw-semibold small text-secondary">Nom <span class="text-danger">*</span></label>
+                                <div class="auth-input-group mb-0">
+                                    <i class="bi bi-person auth-input-icon"></i>
+                                    <input type="text" th:field="*{nom}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid'" 
+                                           placeholder="Ex: Sagna" required>
+                                </div>
+                                <div class="text-danger small mt-1" th:errors="*{nom}"></div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Nom d'utilisateur -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-secondary">Nom d'utilisateur (Identifiant) <span class="text-danger">*</span></label>
+                            <div class="auth-input-group mb-0">
+                                <i class="bi bi-at auth-input-icon"></i>
+                                <input type="text" th:field="*{username}" class="form-control" 
+                                       th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" 
+                                       placeholder="ex: ousmane_sagna" required>
+                            </div>
+                            <div class="text-danger small mt-1" th:errors="*{username}"></div>
+                        </div>
+
+                        <!-- 4. Email & Téléphone -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label fw-semibold small text-secondary">Adresse Email <span class="text-danger">*</span></label>
+                                <div class="auth-input-group mb-0">
+                                    <i class="bi bi-envelope auth-input-icon"></i>
+                                    <input type="email" th:field="*{email}" class="form-control" 
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" 
+                                           placeholder="nom@domaine.sn" required>
+                                </div>
+                                <div class="text-danger small mt-1" th:errors="*{email}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label fw-semibold small text-secondary">Téléphone</label>
+                                <div class="auth-input-group mb-0">
+                                    <i class="bi bi-telephone auth-input-icon"></i>
+                                    <input type="text" th:field="*{telephone}" class="form-control" 
+                                           placeholder="+221 77 123 45 67">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Mot de passe -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-secondary">Mot de passe <span class="text-danger">*</span></label>
+                            <div class="auth-input-group mb-0">
+                                <i class="bi bi-lock auth-input-icon"></i>
+                                <input type="password" th:field="*{password}" class="form-control" 
+                                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" 
+                                       placeholder="6 caractères minimum" required>
+                            </div>
+                            <div class="text-danger small mt-1" th:errors="*{password}"></div>
+                        </div>
+
+                        <!-- 6. SECTION QUALIFICATION SPÉCIFIQUE CANDIDATURE GUIDE PROFESSIONNEL -->
+                        <div id="guideDetailsSection" class="p-3 mb-4 rounded-4 border" style="background: #f7faf8; border-color: #c9ded3 !important; display: none;">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <div class="rounded-circle bg-success text-white p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">
+                                    <i class="bi bi-patch-check-fill fs-6"></i>
+                                </div>
+                                <div>
+                                    <strong class="d-block text-dark small">Dossier de Qualification Professionnelle</strong>
+                                    <small class="text-muted" style="font-size: 0.76rem;">Éléments requis pour l'agrément par le Conservateur de Ziguinchor</small>
+                                </div>
+                            </div>
+
+                            <!-- A. Langues maîtrisées -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary d-block mb-1">
+                                    <i class="bi bi-translate text-primary me-1"></i> Langues parlées pour le guidage des touristes :
+                                </label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_fr" value="Français" checked>
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_fr">🇫🇷 Français</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_en" value="Anglais">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_en">🇬🇧 Anglais</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_diola" value="Diola">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_diola">🇸🇳 Diola (Kassa)</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_man" value="Mandingue">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_man">🇸🇳 Mandingue</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_wo" value="Wolof">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_wo">🇸🇳 Wolof</label>
+                                    </div>
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="btn-check" type="checkbox" name="languesSelectionnees" id="lang_pt" value="Portugais/Crioulo">
+                                        <label class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3" for="lang_pt">🇵🇹 Crioulo / Portugais</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- B. Années d'expérience -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-award text-warning me-1"></i> Années d'expérience sur le terrain en Casamance :
+                                </label>
+                                <div class="input-group input-group-sm" style="max-width: 200px;">
+                                    <input type="number" th:field="*{anneesExperience}" class="form-control" min="1" max="50" value="2">
+                                    <span class="input-group-text bg-white">années</span>
+                                </div>
+                            </div>
+
+                            <!-- C. Circuits maîtrisés -->
+                            <div class="mb-3" th:if="${tousCircuits != null and #lists.size(tousCircuits) > 0}">
+                                <label class="form-label fw-semibold small text-secondary d-block mb-1">
+                                    <i class="bi bi-compass text-success me-1"></i> Circuits touristiques officiels maîtrisés :
+                                </label>
+                                <div class="bg-white p-2 rounded-3 border" style="max-height: 140px; overflow-y: auto;">
+                                    <div class="form-check mb-1" th:each="c : ${tousCircuits}">
+                                        <input class="form-check-input" type="checkbox" name="circuitsSelectionnes" 
+                                               th:id="'circ_' + ${c.id}" th:value="${c.titre}">
+                                        <label class="form-check-label small text-dark" th:for="'circ_' + ${c.id}">
+                                            <strong class="text-success" th:text="${c.code}">CODE</strong> — <span th:text="${c.titre}">Titre</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- D. Sites de prédilection -->
+                            <div class="mb-3" th:if="${tousPatrimoines != null and #lists.size(tousPatrimoines) > 0}">
+                                <label class="form-label fw-semibold small text-secondary d-block mb-1">
+                                    <i class="bi bi-buildings text-danger me-1"></i> Sites & monuments de prédilection :
+                                </label>
+                                <div class="bg-white p-2 rounded-3 border" style="max-height: 140px; overflow-y: auto;">
+                                    <div class="form-check mb-1" th:each="p : ${tousPatrimoines}">
+                                        <input class="form-check-input" type="checkbox" name="sitesSelectionnes" 
+                                               th:id="'site_' + ${p.id}" th:value="${p.nom}">
+                                        <label class="form-check-label small text-dark" th:for="'site_' + ${p.id}">
+                                            <span class="badge bg-light text-secondary border font-monospace me-1" th:text="${p.code}">CODE</span>
+                                            <span th:text="${p.nom}">Nom</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- E. Biographie & Motivation -->
+                            <div class="mb-2">
+                                <label class="form-label fw-semibold small text-secondary">
+                                    <i class="bi bi-chat-quote text-info me-1"></i> Présentation, terroirs & motivation :
+                                </label>
+                                <textarea th:field="*{biographie}" class="form-control" rows="3" 
+                                          style="border-radius: var(--casa-radius-sm); border-color: #d4ded9;"
+                                          placeholder="Présentez votre parcours, vos villages d'intervention en Casamance (ex: Mlomp, Oussouye, Carabane), vos connaissances des forêts sacrées et des bolongs..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Bouton d'action -->
+                        <button type="submit" class="btn btn-casa-primary w-100 py-2 fw-semibold rounded-pill shadow-sm">
+                            <i class="bi bi-person-check-fill me-1"></i> Valider mon inscription
+                        </button>
+                    </form>
+
+                    <!-- Lien Connexion -->
+                    <div class="text-center mt-3 pt-2">
+                        <span class="text-muted small">Vous possédez déjà un compte ?</span>
+                        <a th:href="@{/login}" class="fw-semibold text-decoration-none ms-1" style="color: var(--casa-ochre);">
+                            Se connecter <i class="bi bi-arrow-right-short"></i>
+                        </a>
+                    </div>
+
+                    <!-- Retour Accueil -->
+                    <div class="text-center mt-3">
+                        <a th:href="@{/}" class="text-decoration-none text-muted small">
+                            <i class="bi bi-arrow-left me-1"></i> Retour à l'accueil
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script de bascule dynamique Visiteur vs Guide -->
+    <script>
+        function toggleGuideQualifications() {
+            const isGuide = document.getElementById('roleGuide').checked;
+            const guideBox = document.getElementById('guideDetailsSection');
+            if (guideBox) {
+                guideBox.style.display = isGuide ? 'block' : 'none';
+            }
+        }
+        document.getElementById('roleTouriste').addEventListener('change', toggleGuideQualifications);
+        document.getElementById('roleGuide').addEventListener('change', toggleGuideQualifications);
+        // Exécution initiale au chargement
+        toggleGuideQualifications();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

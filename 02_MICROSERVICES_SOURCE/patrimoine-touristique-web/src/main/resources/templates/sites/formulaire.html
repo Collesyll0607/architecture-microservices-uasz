@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${modeEdition ? 'Modifier le Patrimoine' : 'Nouveau Patrimoine'}">Formulaire Patrimoine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                    <div class="card-header py-3 px-4 text-white" style="background: linear-gradient(135deg, var(--casa-green-deep), var(--casa-green-mangrove));">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 fw-bold" style="font-family: var(--font-heading);">
+                                <i th:class="${modeEdition ? 'bi bi-pencil-square me-2' : 'bi bi-plus-circle me-2'}"></i>
+                                <span th:text="${modeEdition ? 'Modifier le Site Patrimonial' : 'Enregistrer un Nouveau Site'}">Titre</span>
+                            </h4>
+                            <a th:href="@{/patrimoines}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                                <i class="bi bi-arrow-left me-1"></i> Retour au catalogue
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form th:action="@{/patrimoines/enregistrer}" th:object="${patrimoine}" method="post">
+                            <input type="hidden" th:field="*{id}" />
+
+                            <!-- Informations générales -->
+                            <h5 class="fw-bold border-bottom pb-2 mb-3" style="color: var(--casa-green-deep);">1. Informations Générales</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-7">
+                                    <label class="form-label fw-semibold small text-secondary">Nom du site <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{nom}" class="form-control filter-input" 
+                                           th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid'" 
+                                           placeholder="Ex: Place Aline Sitoé Diatta">
+                                    <div class="invalid-feedback" th:errors="*{nom}">Erreur nom</div>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label fw-semibold small text-secondary">Code unique <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{code}" class="form-control filter-input font-monospace text-uppercase" 
+                                           th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'" 
+                                           placeholder="Ex: PAT-ZIG-005" th:readonly="${modeEdition}">
+                                    <div class="invalid-feedback" th:errors="*{code}">Erreur code</div>
+                                    <small class="text-muted" th:if="${modeEdition}">Le code est un identifiant immuable.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Catégorie patrimoniale <span class="text-danger">*</span></label>
+                                    <select th:field="*{categorie}" class="form-select filter-input" th:classappend="${#fields.hasErrors('categorie')} ? 'is-invalid'">
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.libelle}"></option>
+                                    </select>
+                                    <div class="invalid-feedback" th:errors="*{categorie}">Erreur catégorie</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Tarif d'entrée standard (FCFA)</label>
+                                    <input type="number" th:field="*{tarifEntree}" class="form-control filter-input" min="0" step="100" placeholder="0 pour gratuit">
+                                </div>
+                            </div>
+
+                            <!-- Descriptions -->
+                            <h5 class="fw-bold border-bottom pb-2 mb-3" style="color: var(--casa-green-deep);">2. Présentation & Récit Historique</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small text-secondary">Description détaillée <span class="text-danger">*</span></label>
+                                <textarea th:field="*{description}" class="form-control filter-input" rows="4" 
+                                          placeholder="Description architecturale, ambiance des lieux, accueil du public..." 
+                                          th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+                                <div class="invalid-feedback" th:errors="*{description}">Erreur description</div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold small text-secondary">Historique & Signification Culturelle</label>
+                                <textarea th:field="*{historique}" class="form-control filter-input" rows="4" 
+                                          placeholder="Dates clés de fondation, personnalités historiques, traditions rattachées..."></textarea>
+                            </div>
+
+                            <!-- Localisation et Horaires -->
+                            <h5 class="fw-bold border-bottom pb-2 mb-3" style="color: var(--casa-green-deep);">3. Localisation & Accès</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Adresse précise <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{adresse}" class="form-control filter-input" 
+                                           th:classappend="${#fields.hasErrors('adresse')} ? 'is-invalid'" 
+                                           placeholder="Ex: Rue du Général de Gaulle">
+                                    <div class="invalid-feedback" th:errors="*{adresse}">Erreur adresse</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Quartier de Ziguinchor <span class="text-danger">*</span></label>
+                                    <input type="text" th:field="*{quartier}" class="form-control filter-input" 
+                                           th:classappend="${#fields.hasErrors('quartier')} ? 'is-invalid'" 
+                                           placeholder="Ex: Escale, Santhiaba, Boucotte, Boudody">
+                                    <div class="invalid-feedback" th:errors="*{quartier}">Erreur quartier</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Horaires d'ouverture</label>
+                                    <input type="text" th:field="*{horairesOuverture}" class="form-control filter-input" placeholder="Ex: Tous les jours, 8h30 - 18h00">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Capacité d'accueil maximale (personnes)</label>
+                                    <input type="number" th:field="*{capaciteAccueil}" class="form-control filter-input" min="1" placeholder="Ex: 200">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Latitude GPS</label>
+                                    <input type="number" step="any" th:field="*{latitude}" class="form-control filter-input" placeholder="Ex: 12.5833">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small text-secondary">Longitude GPS</label>
+                                    <input type="number" step="any" th:field="*{longitude}" class="form-control filter-input" placeholder="Ex: -16.2719">
+                                </div>
+                            </div>
+
+                            <!-- Média -->
+                            <h5 class="fw-bold border-bottom pb-2 mb-3" style="color: var(--casa-green-deep);">4. Média Visuel</h5>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold small text-secondary">URL de l'image représentative</label>
+                                <input type="url" th:field="*{imageUrl}" class="form-control filter-input" 
+                                       placeholder="https://images.unsplash.com/photo-...">
+                                <small class="text-muted">Lien web direct vers une photo de haute résolution.</small>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+                                <a th:href="@{/patrimoines}" class="btn btn-outline-secondary rounded-pill px-4">Annuler</a>
+                                <button type="submit" class="btn btn-casa-primary rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-check-circle me-1"></i> Enregistrer le Site
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

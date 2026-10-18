@@ -1,0 +1,538 @@
+/* ==========================================================================
+   THEME PAYSAGE CASAMANCE - SYSTEME PATRIMOINE TOURISTIQUE DE ZIGUINCHOR
+   Design System conçu par un Senior Designer UI/UX
+   Palette : Vert Mangrove, Terre Cuite (Laterite), Ocre Solaire, Fleuve Casamance
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap');
+
+:root {
+    /* Palette Terres & Fleuves de Casamance */
+    --casa-green-deep: #16382c;      /* Vert forêt dense & palmeraies */
+    --casa-green-mangrove: #1f513f;  /* Vert mangrove vivifiant */
+    --casa-green-light: #e8f3ee;     /* Nuance de vert douce */
+    --casa-ochre: #d97724;           /* Ocre solaire chaud */
+    --casa-terracotta: #b84a29;      /* Terre de latérite casamançaise */
+    --casa-river-blue: #1c4b68;      /* Bleu profond fleuve Casamance */
+    --casa-river-light: #e4f1f9;     /* Reflets d'eau douce */
+    --casa-sand: #fbf8f3;            /* Sable fin du Cap Skirring */
+    --casa-cream: #f4eee1;           /* Teinte artisanale écrue */
+    
+    /* Typographies */
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    
+    /* Ombres subtiles et bordures */
+    --casa-shadow-sm: 0 2px 8px rgba(22, 56, 44, 0.06);
+    --casa-shadow-md: 0 8px 24px rgba(22, 56, 44, 0.08);
+    --casa-shadow-lg: 0 16px 36px rgba(22, 56, 44, 0.12);
+    --casa-radius-sm: 8px;
+    --casa-radius-md: 16px;
+    --casa-radius-lg: 24px;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--casa-sand);
+    color: #2c3e35;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   NAVIGATION BAR : Style Fleuve & Mangrove
+   ========================================================================== */
+.navbar-casamance {
+    background: linear-gradient(135deg, var(--casa-green-deep) 0%, #0d261e 100%) !important;
+    border-bottom: 3px solid var(--casa-ochre);
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-brand-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+    color: #ffffff !important;
+}
+
+.navbar-brand-title span {
+    color: var(--casa-ochre);
+}
+
+.nav-link-custom {
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: var(--casa-radius-sm);
+    transition: all 0.25s ease;
+}
+
+.nav-link-custom:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-badge-pill {
+    padding: 0.35rem 0.8rem;
+    border-radius: 50rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   HERO BANNER : Paysage Bolongs & Casamance
+   ========================================================================== */
+.hero-casamance {
+    position: relative;
+    background: linear-gradient(135deg, rgba(22, 56, 44, 0.88) 0%, rgba(28, 75, 104, 0.82) 100%),
+                url('/images/casamance/bras_de_mer.jpg') center/cover no-repeat;
+    color: white;
+    padding: 4.5rem 2rem;
+    border-radius: var(--casa-radius-lg);
+    box-shadow: var(--casa-shadow-lg);
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+}
+
+.hero-casamance::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--casa-ochre), #f39c12, var(--casa-terracotta));
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 2.6rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 750px;
+    margin: 0 auto;
+    font-weight: 400;
+}
+
+.hero-stats-badge {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50rem;
+    padding: 0.5rem 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 1.5rem;
+}
+
+/* ==========================================================================
+   CARTES DE SITES PATRIMONIAUX (Card UI)
+   ========================================================================== */
+.card-site-casa {
+    background: #ffffff;
+    border: 1px solid rgba(22, 56, 44, 0.08) !important;
+    border-radius: var(--casa-radius-md) !important;
+    overflow: hidden;
+    box-shadow: var(--casa-shadow-sm) !important;
+    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-site-casa:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--casa-shadow-lg) !important;
+    border-color: rgba(217, 119, 36, 0.3) !important;
+}
+
+.site-img-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background-color: var(--casa-cream);
+}
+
+.site-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card-site-casa:hover .site-img-wrapper img {
+    transform: scale(1.06);
+}
+
+.site-badge-category {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(22, 56, 44, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    padding: 0.35rem 0.85rem;
+    border-radius: 50rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.site-badge-code {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    color: var(--casa-green-deep);
+    padding: 0.35rem 0.75rem;
+    border-radius: 50rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: monospace;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card-site-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.site-title {
+    font-family: var(--font-heading);
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: var(--casa-green-deep);
+    margin-bottom: 0.45rem;
+    line-height: 1.35;
+}
+
+.site-location {
+    font-size: 0.88rem;
+    color: #64746d;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.site-description {
+    font-size: 0.92rem;
+    color: #4a5c54;
+    margin-bottom: 1.25rem;
+    line-height: 1.55;
+    flex-grow: 1;
+}
+
+.site-card-footer {
+    border-top: 1px solid rgba(22, 56, 44, 0.08);
+    padding-top: 1rem;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--casa-ochre);
+}
+
+/* ==========================================================================
+   BOUTONS & ELEMENTS D'INTERACTIONS
+   ========================================================================== */
+.btn-casa-primary {
+    background: linear-gradient(135deg, var(--casa-green-mangrove) 0%, var(--casa-green-deep) 100%);
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--casa-radius-sm);
+    box-shadow: 0 4px 12px rgba(22, 56, 44, 0.2);
+    transition: all 0.25s ease;
+}
+
+.btn-casa-primary:hover {
+    background: linear-gradient(135deg, #25664f 0%, var(--casa-green-mangrove) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(22, 56, 44, 0.3);
+}
+
+.btn-casa-ochre {
+    background: linear-gradient(135deg, var(--casa-ochre) 0%, var(--casa-terracotta) 100%);
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: var(--casa-radius-sm);
+    box-shadow: 0 4px 12px rgba(217, 119, 36, 0.25);
+    transition: all 0.25s ease;
+}
+
+.btn-casa-ochre:hover {
+    background: linear-gradient(135deg, #e58735 0%, var(--casa-ochre) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(217, 119, 36, 0.35);
+}
+
+/* Boutons d'action rapides sur les cartes */
+.btn-action-view {
+    color: var(--casa-green-mangrove);
+    border-color: rgba(31, 81, 63, 0.3);
+}
+.btn-action-view:hover {
+    background-color: var(--casa-green-mangrove);
+    color: #fff;
+}
+
+.btn-action-edit {
+    color: var(--casa-ochre);
+    border-color: rgba(217, 119, 36, 0.3);
+}
+.btn-action-edit:hover {
+    background-color: var(--casa-ochre);
+    color: #fff;
+}
+
+/* ==========================================================================
+   BOITE DE RECHERCHE & FILTRAGE (Filtres)
+   ========================================================================== */
+.filter-box-casa {
+    background: #ffffff;
+    border-radius: var(--casa-radius-md);
+    padding: 1.5rem;
+    border: 1px solid rgba(22, 56, 44, 0.08);
+    box-shadow: var(--casa-shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.filter-input {
+    border: 1px solid #d4ded9;
+    border-radius: var(--casa-radius-sm);
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+}
+
+.filter-input:focus {
+    border-color: var(--casa-green-mangrove);
+    box-shadow: 0 0 0 3px rgba(31, 81, 63, 0.15);
+}
+
+/* ==========================================================================
+   FOOTER : Signature Régionale
+   ========================================================================== */
+.footer-casamance {
+    background: linear-gradient(180deg, #10251e 0%, #091712 100%);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 3.5rem 0 2rem;
+    border-top: 4px solid var(--casa-ochre);
+    margin-top: 5rem;
+}
+
+.footer-brand {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.footer-subtitle {
+    font-size: 0.95rem;
+    color: #a3b8ad;
+}
+
+.footer-copy {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    margin-top: 2.5rem;
+    font-size: 0.85rem;
+    color: #7b9487;
+}
+
+/* ==========================================================================
+   AUTHENTIFICATION & INSCRIPTION (Split-Screen Casamance Design)
+   ========================================================================== */
+.auth-page-wrapper {
+    min-height: 100vh;
+    background: radial-gradient(circle at 10% 20%, #eaf2ed 0%, var(--casa-sand) 90%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+}
+
+.auth-container-card {
+    background: #ffffff;
+    border-radius: var(--casa-radius-lg);
+    box-shadow: 0 20px 45px rgba(22, 56, 44, 0.12);
+    overflow: hidden;
+    border: 1px solid rgba(22, 56, 44, 0.08);
+    width: 100%;
+    max-width: 1050px;
+}
+
+.auth-visual-side {
+    position: relative;
+    background: linear-gradient(145deg, rgba(22, 56, 44, 0.88) 0%, rgba(31, 81, 63, 0.80) 100%),
+                url('/images/casamance/bolong_mangrove.jpg') center/cover no-repeat;
+    color: #ffffff;
+    padding: 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+}
+
+.auth-visual-side::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at top right, rgba(217, 119, 36, 0.25) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.auth-form-side {
+    padding: 3.5rem 3rem;
+    background: #ffffff;
+}
+
+.auth-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    padding: 0.45rem 1rem;
+    border-radius: 50rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.auth-quote-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--casa-radius-md);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.auth-input-group {
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.auth-input-group .form-control {
+    border: 1.5px solid #d4ded9;
+    border-radius: var(--casa-radius-sm);
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.auth-input-group .form-control:focus {
+    border-color: var(--casa-green-mangrove);
+    box-shadow: 0 0 0 4px rgba(31, 81, 63, 0.12);
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b9e94;
+    font-size: 1.1rem;
+    z-index: 5;
+}
+
+/* Sélection de Rôle Inscription */
+.role-picker-card {
+    border: 2px solid #e1ebe5;
+    border-radius: var(--casa-radius-md);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: #fdfbf7;
+}
+
+.role-picker-card:hover {
+    border-color: var(--casa-green-mangrove);
+    background: #ffffff;
+}
+
+.btn-check:checked + .role-picker-card {
+    border-color: var(--casa-green-mangrove);
+    background: var(--casa-green-light);
+    box-shadow: 0 4px 14px rgba(31, 81, 63, 0.1);
+}
+
+.role-picker-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: white;
+    color: var(--casa-green-mangrove);
+    border: 1px solid #d8e5de;
+}
+
+.btn-check:checked + .role-picker-card .role-picker-icon {
+    background: var(--casa-green-mangrove);
+    color: white;
+    border-color: var(--casa-green-mangrove);
+}
+
+/* Badge Comptes de test */
+.test-accounts-box {
+    background: #f7faf8;
+    border: 1px dashed #b9d3c5;
+    border-radius: var(--casa-radius-sm);
+    padding: 1rem;
+    margin-top: 1.75rem;
+}
+
+.test-user-tag {
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #c9ded3;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+}
+
+.test-user-tag:hover {
+    background: #e8f3ee;
+    border-color: var(--casa-green-mangrove);
+}
+

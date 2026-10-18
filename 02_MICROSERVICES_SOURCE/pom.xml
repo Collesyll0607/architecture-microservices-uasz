@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>sn.zig</groupId>
+    <artifactId>patrimoine-touristique-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>Patrimoine Touristique Ziguinchor - Multi-Modules</name>
+    <description>Projet global regroupant le portail web et les 4 microservices</description>
+
+    <modules>
+        <module>ms-patrimoine</module>
+        <module>ms-circuit</module>
+        <module>ms-evenement</module>
+        <module>ms-reservation</module>
+        <module>patrimoine-touristique-web</module>
+    </modules>
+
+</project>

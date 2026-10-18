@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ziguinchor Tourisme - Joyau Naturel & Culturel de Casamance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- En-tête Navigation -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="flex-grow-1">
+
+        <!-- 1. GRANDE SECTION D'INTRODUCTION HERO (Esprit Casamance) -->
+        <section class="py-5" style="background: linear-gradient(180deg, #eaf2ed 0%, var(--casa-sand) 100%);">
+            <div class="container py-4">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <span class="badge px-3 py-2 rounded-pill mb-3" style="background: var(--casa-ochre); color: white; font-weight: 600; letter-spacing: 0.5px;">
+                            <i class="bi bi-geo-alt-fill me-1"></i> RÉGION DE CASAMANCE — SÉNÉGAL
+                        </span>
+                        <h1 class="display-4 fw-bold" style="font-family: var(--font-heading); color: var(--casa-green-deep); line-height: 1.15;">
+                            Découvrez le Patrimoine Vivant de Ziguinchor
+                        </h1>
+                        <p class="lead mt-3 mb-4" style="color: #43594f; font-size: 1.15rem;">
+                            Bienvenue sur le portail officiel de valorisation touristique. Entre fleuve majestueux, architecture coloniale, villages d'artisans d'art et forêts sacrées, plongez dans l'authenticité de la Casamance.
+                        </p>
+
+                        <!-- Barre de recherche rapide intégrée -->
+                        <form th:action="@{/patrimoines}" method="get" class="p-2 bg-white rounded-pill shadow-sm border d-flex gap-2 mb-4" style="max-width: 540px;">
+                            <input type="text" name="keyword" class="form-control border-0 rounded-pill ps-3 shadow-none" 
+                                   placeholder="Rechercher un monument, quartier, musée...">
+                            <button type="submit" class="btn btn-casa-primary rounded-pill px-4">
+                                <i class="bi bi-search me-1"></i> Explorer
+                            </button>
+                        </form>
+
+                        <div class="d-flex flex-wrap gap-3 align-items-center text-muted small">
+                            <span><i class="bi bi-check2-circle text-success me-1"></i> Données certifiées</span>
+                            <span><i class="bi bi-check2-circle text-success me-1"></i> Guides professionnels locaux</span>
+                            <span><i class="bi bi-check2-circle text-success me-1"></i> Réservation directe</span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="position-relative">
+                            <img th:src="@{/images/casamance/bras_de_mer.jpg}" 
+                                 alt="Bras de Mer et Fleuve de Ziguinchor" class="img-fluid rounded-4 shadow-lg w-100" style="height: 380px; object-fit: cover;">
+                            <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white bg-opacity-95 rounded-3 shadow-sm border border-light" style="max-width: 280px; backdrop-filter: blur(8px);">
+                                <small class="text-uppercase fw-bold text-success d-block mb-1" style="font-size: 0.72rem;">Écotourisme</small>
+                                <p class="mb-0 fw-semibold text-dark small">Navigation sur le fleuve & découverte des bolongs préservés.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SÉLECTION DES SITES PATRIMONIAUX (Données Réelles) -->
+        <section class="py-5">
+            <div class="container">
+                <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                    <div>
+                        <span class="text-uppercase fw-bold text-success small">Trésors Incontournables</span>
+                        <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">Sites & Monuments Majeurs</h2>
+                    </div>
+                    <a th:href="@{/patrimoines}" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                        Voir tout le catalogue (<span th:text="${totalSites}">4</span> sites) <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    <div class="col" th:each="p : ${sitesSelection}">
+                        <div class="card-site-casa">
+                            <div class="site-img-wrapper">
+                                <img th:src="${p.imageUrl}" th:alt="${p.nom}" loading="lazy">
+                                <span class="site-badge-category" th:text="${p.categorie.libelle}">Catégorie</span>
+                                <span class="site-badge-code" th:text="${p.code}">CODE</span>
+                            </div>
+                            <div class="card-site-body">
+                                <h5 class="site-title" th:text="${p.nom}">Nom du Site</h5>
+                                <div class="site-location">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                                    <span th:text="${p.quartier != null ? p.quartier + ', Ziguinchor' : p.adresse}">Quartier</span>
+                                </div>
+                                <p class="site-description" th:text="${#strings.abbreviate(p.description, 110)}">Description...</p>
+                                <div class="site-card-footer">
+                                    <span class="site-price" th:text="${p.tarifEntree == 0.0 ? 'Entrée Libre' : #numbers.formatDecimal(p.tarifEntree, 0, 'POINT', 0, 'POINT') + ' FCFA'}"></span>
+                                    <a th:href="@{/patrimoines/detail/{id}(id=${p.id})}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                        Explorer <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CIRCUITS TOURISTIQUES (Alimenté par ms-circuit sur Port 8082) -->
+        <section class="py-5" style="background: var(--casa-cream);">
+            <div class="container">
+                <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                    <div>
+                        <span class="text-uppercase fw-bold text-warning small">Parcours & Itinéraires</span>
+                        <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">Circuits Touristiques Recommandés</h2>
+                    </div>
+                    <a th:href="@{/circuits}" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                        Tous les circuits <i class="bi bi-compass ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 g-4" th:if="${#lists.size(circuits) > 0}">
+                    <div class="col" th:each="c : ${circuits}">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-4 bg-white">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge rounded-pill bg-warning-subtle text-dark border border-warning-subtle px-3 py-2 fw-semibold" 
+                                      th:text="${c.code}">CODE</span>
+                                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-semibold" 
+                                      th:text="${c.difficulte}">Facile</span>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="font-family: var(--font-heading); color: var(--casa-green-deep);" th:text="${c.titre}">Titre Circuit</h4>
+                            <p class="text-secondary small mb-3" th:text="${c.description}">Description...</p>
+                            
+                            <!-- Sites et Patrimoines reliés au circuit (Consigne prof TP2) -->
+                            <div class="mb-3" th:if="${c.etapes != null and #lists.size(c.etapes) > 0}">
+                                <span class="text-muted small fw-bold d-block mb-1">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Sites visités :
+                                </span>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <a th:each="p : ${c.etapes}" th:href="@{/patrimoines/detail/{id}(id=${p.id})}" 
+                                       class="badge bg-light text-dark text-decoration-none border px-2 py-1 rounded-pill">
+                                        <i class="bi bi-pin-map-fill text-success me-1"></i> <span th:text="${p.nom}">Site</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-4 mb-4 text-muted small border-top border-bottom py-2">
+                                <div><i class="bi bi-clock me-1 text-danger"></i> <strong th:text="${c.dureeEstimeeMinutes} + ' min'">180 min</strong></div>
+                                <div><i class="bi bi-signpost-2 me-1 text-primary"></i> <strong th:text="${c.distanceKm} + ' km'">4 km</strong></div>
+                                <div><i class="bi bi-cash me-1 text-success"></i> <strong th:text="${#numbers.formatDecimal(c.tarifCircuit, 0, 'POINT', 0, 'POINT')} + ' FCFA'">5000 FCFA</strong></div>
+                            </div>
+
+                            <a th:href="@{/circuits}" class="btn btn-casa-primary btn-sm rounded-pill mt-auto">
+                                Consulter le circuit & Réserver <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.size(circuits) == 0}" class="text-center py-4 text-muted">
+                    <p class="mb-0">Les circuits touristiques sont en cours de chargement depuis le service dédié.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ÉVÉNEMENTS À VENIR (Alimenté par ms-evenement sur Port 8083) -->
+        <section class="py-5">
+            <div class="container">
+                <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                    <div>
+                        <span class="text-uppercase fw-bold text-danger small">Agenda Culturel</span>
+                        <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">Événements & Expositions à Venir</h2>
+                    </div>
+                    <a th:href="@{/evenements}" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                        Tous les événements <i class="bi bi-calendar-event ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 g-4" th:if="${#lists.size(evenements) > 0}">
+                    <div class="col" th:each="e : ${evenements}">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 p-4 bg-white border-start border-4 border-success">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1" th:text="${e.typeEvenement}">Type</span>
+                                <span class="small text-muted font-monospace" th:text="${e.code}">EVT-01</span>
+                            </div>
+                            <h4 class="fw-bold mb-2" style="color: var(--casa-green-deep); font-family: var(--font-heading);" th:text="${e.titre}">Titre</h4>
+                            <p class="text-secondary small mb-3" th:text="${e.description}">Description...</p>
+                            
+                            <div class="text-muted small mb-3">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> <span th:text="${e.lieuPrecis}">Lieu</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <span th:text="${e.placesMax - e.placesOccupees}">10</span> places disponibles
+                                </span>
+                                <a th:href="@{/evenements}" class="btn btn-sm btn-casa-ochre rounded-pill px-3">
+                                    Détails & Réservation <i class="bi bi-ticket-perforated ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pied de page -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

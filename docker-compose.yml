@@ -1,0 +1,149 @@
+# =====================================================================
+# DOCKER-COMPOSE OFFICIEL (100% AUTONOME AVEC BASE DE DONNÉES INCLUSE)
+# Module : Développement d'Applications Orientées Services
+# Enseignant : Dr Lamine FATY
+# Binôme : Collé SYLL (202300489) & Ndeye Thiamba FAYE (202300488)
+# =====================================================================
+
+services:
+  # -------------------------------------------------------------------
+  # 0. Base de données MySQL 8.0 auto-initialisée
+  # -------------------------------------------------------------------
+  patrimoine-db:
+    image: mysql:8.0
+    container_name: patrimoine-mysql-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: patrimoinedb
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3307:3306" # Port 3307 sur l'hôte pour éviter tout conflit avec un XAMPP existant
+    volumes:
+      - ./03_BASE_DE_DONNEES/init_clean_utf8_data.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot || exit 1"]
+      interval: 4s
+      timeout: 5s
+      retries: 15
+
+  # -------------------------------------------------------------------
+  # 1. Microservice ms-patrimoine (TP 2 & TP 3 - DTO & MapStruct)
+  # -------------------------------------------------------------------
+  ms-patrimoine:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-patrimoine
+      dockerfile: Dockerfile
+    image: collesyll/patrimoines:v1
+    container_name: ms-patrimoine-container
+    restart: on-failure
+    depends_on:
+      patrimoine-db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+      - "3001:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patrimoine-db:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8081
+
+  # -------------------------------------------------------------------
+  # 2. Microservice ms-circuit (OpenFeign vers ms-patrimoine)
+  # -------------------------------------------------------------------
+  ms-circuit:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-circuit
+      dockerfile: Dockerfile
+    image: collesyll/circuits:v1
+    container_name: ms-circuit-container
+    restart: on-failure
+    depends_on:
+      patrimoine-db:
+        condition: service_healthy
+      ms-patrimoine:
+        condition: service_started
+    ports:
+      - "8082:8082"
+      - "3002:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patrimoine-db:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8082
+      MS_PATRIMOINE_URL: http://ms-patrimoine:8081
+
+  # -------------------------------------------------------------------
+  # 3. Microservice ms-evenement
+  # -------------------------------------------------------------------
+  ms-evenement:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-evenement
+      dockerfile: Dockerfile
+    image: collesyll/evenements:v1
+    container_name: ms-evenement-container
+    restart: on-failure
+    depends_on:
+      patrimoine-db:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+      - "3003:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patrimoine-db:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8083
+
+  # -------------------------------------------------------------------
+  # 4. Microservice ms-reservation
+  # -------------------------------------------------------------------
+  ms-reservation:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/ms-reservation
+      dockerfile: Dockerfile
+    image: collesyll/reservations:v1
+    container_name: ms-reservation-container
+    restart: on-failure
+    depends_on:
+      patrimoine-db:
+        condition: service_healthy
+      ms-patrimoine:
+        condition: service_started
+      ms-circuit:
+        condition: service_started
+      ms-evenement:
+        condition: service_started
+    ports:
+      - "8084:8084"
+      - "3004:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patrimoine-db:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8084
+
+  # -------------------------------------------------------------------
+  # 5. Application Web Frontend Touriste & Conservateur
+  # -------------------------------------------------------------------
+  patrimoine-touristique-web:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/patrimoine-touristique-web
+      dockerfile: Dockerfile
+    image: collesyll/patrimoine-web:v1
+    container_name: patrimoine-web-container
+    restart: on-failure
+    depends_on:
+      patrimoine-db:
+        condition: service_healthy
+      ms-patrimoine:
+        condition: service_started
+      ms-circuit:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://patrimoine-db:3306/patrimoinedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SERVER_PORT: 8080

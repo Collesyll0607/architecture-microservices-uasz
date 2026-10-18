@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Patrimoine Touristique de Ziguinchor - Perle de Casamance</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Thème Purement Casamançais -->
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- En-tête Navigation -->
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-4 flex-grow-1">
+
+        <!-- Messages Flash d'alerte -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-success border-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2 fs-5 align-middle"></i>
+            <span th:text="${successMessage}" class="fw-medium"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 border-0 border-start border-danger border-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger me-2 fs-5 align-middle"></i>
+            <span th:text="${errorMessage}" class="fw-medium"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Hero Section : Paysage & Esprit Casamançais -->
+        <div class="hero-casamance text-center text-lg-start">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge px-3 py-2 rounded-pill mb-3" style="background: rgba(217, 119, 36, 0.9); font-weight: 600; letter-spacing: 0.5px;">
+                        <i class="bi bi-water me-1"></i> AU CŒUR DES BOLONGS & DU FLEUVE
+                    </span>
+                    <h1 class="hero-title">Patrimoine & Trésors de Ziguinchor</h1>
+                    <p class="hero-subtitle">
+                        Explorez l'héritage vivant de la Casamance : de l'architecture coloniale de l'Escale aux villages d'artisans, des forêts sacrées aux berges majestueuses du fleuve.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
+                        <div class="hero-stats-badge">
+                            <i class="bi bi-shield-check text-warning"></i>
+                            <span th:text="${totalElements}">4</span> Sites Répertoriés
+                        </div>
+                        <div class="hero-stats-badge">
+                            <i class="bi bi-compass text-info"></i>
+                            Circuits Écotouristiques Disponibles
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center d-none d-lg-block">
+                    <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 backdrop-blur shadow-lg">
+                        <i class="bi bi-tree-fill display-3 text-warning d-block mb-2"></i>
+                        <h6 class="fw-bold text-white mb-1">Écotourisme & Mémoire</h6>
+                        <small class="text-white-50">Immersion authentique et préservation culturelle</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boîte de Recherche & Filtrage Raffinée -->
+        <div class="filter-box-casa">
+            <form th:action="@{/patrimoines}" method="get" class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-secondary mb-1">
+                        <i class="bi bi-search me-1 text-success"></i> Rechercher un site
+                    </label>
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control filter-input" 
+                           placeholder="Ex: Alliance, Boudody, Santhiaba...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary mb-1">
+                        <i class="bi bi-filter me-1 text-success"></i> Catégorie patrimoniale
+                    </label>
+                    <select name="categorie" class="form-select filter-input">
+                        <option value="">Toutes les catégories</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat}" 
+                                th:text="${cat.libelle}" 
+                                th:selected="${cat == selectedCategorie}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-casa-primary flex-grow-1">
+                        <i class="bi bi-funnel me-1"></i> Filtrer
+                    </button>
+                    <a th:href="@{/patrimoines}" class="btn btn-outline-secondary" title="Réinitialiser">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- En-tête des résultats avec bouton d'action contextuel -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="mb-0 fw-bold" style="color: var(--casa-green-deep); font-family: var(--font-heading);">
+                <i class="bi bi-geo-alt me-2 text-warning"></i>Sites & Lieux Emblématiques
+                <span class="badge rounded-pill bg-success-subtle text-success fs-6 fw-semibold ms-2 align-middle" 
+                      th:text="${totalElements} + ' site(s)'">0 site</span>
+            </h4>
+            
+            <a th:href="@{/patrimoines/nouveau}" th:if="${isConservateur}" class="btn btn-casa-ochre btn-sm">
+                <i class="bi bi-plus-lg me-1"></i> Ajouter un site
+            </a>
+        </div>
+
+        <!-- Grille des Cartes de Patrimoines Purement Casamançaises -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4" th:if="${#lists.size(listePatrimoines) > 0}">
+            <div class="col" th:each="p : ${listePatrimoines}">
+                <div class="card-site-casa">
+                    
+                    <!-- Vignette Image avec Badges en Verre Dépoli -->
+                    <div class="site-img-wrapper">
+                        <img th:if="${p.imageUrl != null and !#strings.isEmpty(p.imageUrl)}" 
+                             th:src="${p.imageUrl}" th:alt="${p.nom}" loading="lazy">
+                        <div th:unless="${p.imageUrl != null and !#strings.isEmpty(p.imageUrl)}" 
+                             class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted"
+                             style="background: linear-gradient(135deg, #e4eee9 0%, #d8e5df 100%);">
+                            <i class="bi bi-image fs-1 text-success opacity-50 mb-1"></i>
+                            <span class="small font-monospace text-secondary">Vue de Casamance</span>
+                        </div>
+
+                        <!-- Catégorie et Code -->
+                        <span class="site-badge-category" th:text="${p.categorie.libelle}">Catégorie</span>
+                        <span class="site-badge-code" th:text="${p.code}">CODE</span>
+                    </div>
+                    
+                    <!-- Corps de la Carte -->
+                    <div class="card-site-body">
+                        <h5 class="site-title" th:text="${p.nom}">Nom du Patrimoine</h5>
+                        
+                        <div class="site-location">
+                            <i class="bi bi-geo-alt-fill text-danger"></i> 
+                            <span th:text="${p.quartier != null ? p.quartier + ', Ziguinchor' : p.adresse}">Quartier</span>
+                        </div>
+
+                        <p class="site-description" th:text="${#strings.abbreviate(p.description, 115)}">Description...</p>
+
+                        <!-- Pied de Carte : Prix & Actions selon Rôle -->
+                        <div class="site-card-footer">
+                            <div>
+                                <small class="text-muted d-block" style="font-size: 0.75rem; text-transform: uppercase;">Tarif visiteur</small>
+                                <span class="site-price" 
+                                      th:text="${p.tarifEntree == 0.0 ? 'Entrée Libre' : #numbers.formatDecimal(p.tarifEntree, 0, 'POINT', 0, 'POINT') + ' FCFA'}">
+                                </span>
+                            </div>
+
+                            <div class="btn-group btn-group-sm">
+                                <a th:href="@{/patrimoines/detail/{id}(id=${p.id})}" class="btn btn-outline-success btn-action-view" title="Explorer la fiche">
+                                    <i class="bi bi-eye me-1"></i> Découvrir
+                                </a>
+                                <a th:href="@{/patrimoines/modifier/{id}(id=${p.id})}" th:if="${isConservateur}" class="btn btn-outline-warning btn-action-edit" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/patrimoines/supprimer/{id}(id=${p.id})}" th:if="${isConservateur}" 
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce patrimoine ?');" 
+                                   class="btn btn-outline-danger" title="Supprimer">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message aucun résultat avec illustration douce -->
+        <div th:if="${#lists.size(listePatrimoines) == 0}" class="card border-0 shadow-sm p-5 text-center my-4 rounded-4 bg-white">
+            <div class="rounded-circle d-inline-flex p-3 mb-3 bg-success-subtle text-success mx-auto">
+                <i class="bi bi-search fs-2"></i>
+            </div>
+            <h5 class="fw-bold" style="color: var(--casa-green-deep);">Aucun site correspondant</h5>
+            <p class="text-muted mb-3">Aucun trésor patrimonial ne correspond à votre filtre de recherche actuel.</p>
+            <div>
+                <a th:href="@{/patrimoines}" class="btn btn-casa-primary btn-sm">Réinitialiser les critères</a>
+            </div>
+        </div>
+
+        <!-- Pagination Élégante -->
+        <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-5">
+            <nav aria-label="Pagination">
+                <ul class="pagination pagination-sm shadow-sm rounded-pill overflow-hidden">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link px-3" th:href="@{/patrimoines(page=${currentPage - 1}, keyword=${keyword}, categorie=${selectedCategorie})}">
+                            <i class="bi bi-chevron-left"></i> Précédent
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="page, status : ${pages}" th:classappend="${status.index == currentPage} ? 'active'">
+                        <a class="page-link px-3 fw-semibold" th:href="@{/patrimoines(page=${status.index}, keyword=${keyword}, categorie=${selectedCategorie})}" 
+                           th:text="${status.index + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link px-3" th:href="@{/patrimoines(page=${currentPage + 1}, keyword=${keyword}, categorie=${selectedCategorie})}">
+                            Suivant <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </main>
+
+    <!-- Pied de page Casamance -->
+    <div th:replace="~{fragments/layout :: footer}"></div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+    <!-- Barre de Navigation Identité Casamance -->
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark navbar-casamance py-3 sticky-top">
+        <div class="container">
+            <!-- Brand avec Logo Culturel -->
+            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" th:href="@{/patrimoines}">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                     style="width: 42px; height: 42px; background: linear-gradient(135deg, var(--casa-ochre), var(--casa-terracotta)); box-shadow: 0 4px 10px rgba(0,0,0,0.25);">
+                    <i class="bi bi-compass text-white fs-5"></i>
+                </div>
+                <div>
+                    <span class="navbar-brand-title d-block mb-0">Ziguinchor <span>Tourisme</span></span>
+                    <small class="text-white-50 d-block" style="font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase;">Perle de Casamance</small>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav me-auto ms-lg-4 gap-1">
+                    <!-- Catalogue ouvert -->
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" th:href="@{/patrimoines}">
+                            <i class="bi bi-houses me-1 text-warning"></i> Sites
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" th:href="@{/circuits}">
+                            <i class="bi bi-compass me-1 text-info"></i> Circuits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" th:href="@{/evenements}">
+                            <i class="bi bi-calendar-event me-1 text-success"></i> Événements
+                        </a>
+                    </li>
+
+                    <!-- Espaces Selon Rôles avec styles raffinés -->
+                    <li class="nav-item" sec:authorize="hasAuthority('ROLE_TOURISTE')">
+                        <a class="nav-link nav-link-custom" th:href="@{/touriste/mes-reservations}">
+                            <i class="bi bi-ticket-perforated me-1 text-info"></i> Mes Billets & Pass QR
+                        </a>
+                    </li>
+
+                    <li class="nav-item" sec:authorize="hasAuthority('ROLE_GUIDE')">
+                        <a class="nav-link nav-link-custom" th:href="@{/guide/espace}">
+                            <i class="bi bi-calendar-check me-1 text-success"></i> Mon Agenda de Guide
+                        </a>
+                    </li>
+
+                    <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_CONSERVATEUR', 'ROLE_ADMIN')">
+                        <a class="nav-link nav-link-custom" th:href="@{/conservateur/dashboard}">
+                            <i class="bi bi-speedometer2 me-1 text-warning"></i> Dashboard Conservateur
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <!-- Bouton Ajout pour Conservateur -->
+                    <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_CONSERVATEUR', 'ROLE_ADMIN')">
+                        <a class="btn btn-casa-ochre btn-sm shadow-sm" th:href="@{/patrimoines/nouveau}">
+                            <i class="bi bi-plus-lg me-1"></i> Nouveau Site
+                        </a>
+                    </li>
+
+                    <!-- Anonyme : Inscription & Connexion -->
+                    <li class="nav-item d-flex align-items-center gap-2" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-sm btn-outline-light px-3" th:href="@{/login}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Connexion
+                        </a>
+                        <a class="btn btn-sm btn-casa-ochre px-3" th:href="@{/register}">
+                            <i class="bi bi-person-plus me-1"></i> S'inscrire
+                        </a>
+                    </li>
+
+                    <!-- Menu Profil Connecté -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="btn btn-sm btn-light dropdown-toggle fw-semibold rounded-pill px-3 shadow-sm" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1 text-success"></i>
+                            <span sec:authentication="name">Utilisateur</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2">
+                            <li class="dropdown-item-text text-muted small">
+                                Profil : <span sec:authentication="principal.authorities" class="badge bg-success-subtle text-success border border-success-subtle">RÔLE</span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li sec:authorize="hasAuthority('ROLE_TOURISTE')">
+                                <a class="dropdown-item py-2" th:href="@{/touriste/mes-reservations}">
+                                    <i class="bi bi-ticket me-2 text-primary"></i> Mes Billets & Pass
+                                </a>
+                            </li>
+                            <li sec:authorize="hasAuthority('ROLE_GUIDE')">
+                                <a class="dropdown-item py-2" th:href="@{/guide/espace}">
+                                    <i class="bi bi-calendar me-2 text-success"></i> Mon Agenda de Guide
+                                </a>
+                            </li>
+                            <li sec:authorize="hasAnyAuthority('ROLE_CONSERVATEUR', 'ROLE_ADMIN')">
+                                <a class="dropdown-item py-2" th:href="@{/conservateur/dashboard}">
+                                    <i class="bi bi-shield-check me-2 text-warning"></i> Panneau d'Administration
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="px-2">
+                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center py-2">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Pied de page Identité Casamance -->
+    <footer th:fragment="footer" class="footer-casamance">
+        <div class="container">
+            <div class="row g-4 align-items-center text-center text-md-start">
+                <div class="col-md-6">
+                    <div class="footer-brand mb-1">Patrimoine Touristique de Ziguinchor</div>
+                    <p class="footer-subtitle mb-0">Plateforme de préservation, valorisation et promotion du patrimoine culturel et naturel de la Casamance.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-inline-flex gap-2">
+                        <span class="badge bg-dark border border-secondary px-3 py-2"><i class="bi bi-tree me-1 text-success"></i> Écotourisme Responsable</span>
+                        <span class="badge bg-dark border border-secondary px-3 py-2"><i class="bi bi-bank me-1 text-warning"></i> Mémoire & Histoire</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copy text-center">
+                <p class="mb-0">Licence 3 Informatique (L3 2I) — Université Assane Seck de Ziguinchor (UASZ)</p>
+                <small class="text-white-50">Réalisé sous la direction du Pr. Ibrahima DIOP & Dr. Lamine FATY</small>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

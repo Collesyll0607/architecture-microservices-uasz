@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Circuits Touristiques - Ziguinchor & Casamance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/theme-casamance.css}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <main class="container my-5 flex-grow-1">
+
+        <!-- Hero Header Circuits -->
+        <div class="rounded-4 p-4 p-md-5 mb-5 shadow-sm text-white position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, rgba(22, 56, 44, 0.88), rgba(28, 75, 104, 0.82)), url('/images/casamance/carabane_bolong.jpg') center/cover no-repeat;">
+            <div class="position-relative" style="z-index: 2; max-width: 650px;">
+                <span class="badge px-3 py-2 rounded-pill mb-2" style="background: var(--casa-ochre); color: white;">
+                    <i class="bi bi-compass-fill me-1"></i> ÉCOTOURISME FLUVIAL & TERRESTRE
+                </span>
+                <h1 class="display-6 fw-bold mb-2" style="font-family: var(--font-heading);">
+                    Circuits & Itinéraires en Basse-Casamance
+                </h1>
+                <p class="mb-0 text-white-50 lead" style="font-size: 1.05rem;">
+                    Parcourez les dédales de bolongs en pirogue traditionnelle, visitez les villages d'artisans et sillonnez les forêts protégées accompagnés par nos guides agréés.
+                </p>
+            </div>
+        </div>
+
+        <div class="mb-4 pb-2 border-bottom d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-warning-subtle text-dark border border-warning-subtle mb-1">Itinéraires Certifiés</span>
+                <h2 class="fw-bold mb-0" style="font-family: var(--font-heading); color: var(--casa-green-deep);">
+                    Catalogue des Circuits Disponibles
+                </h2>
+            </div>
+            <a th:href="@{/}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                <i class="bi bi-arrow-left me-1"></i> Retour à l'accueil
+            </a>
+        </div>
+
+        <div th:if="${serviceIndisponible}" class="alert alert-warning rounded-3 shadow-sm mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Le microservice des circuits (ms-circuit) est momentanément inaccessible.
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-4" th:if="${#lists.size(circuits) > 0}">
+            <div class="col" th:each="c : ${circuits}">
+                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden bg-white">
+                    <div style="height: 160px; position: relative; overflow: hidden;">
+                        <img th:src="@{/images/casamance/pirogue_fleuve.jpg}" alt="Circuit Casamance" 
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge rounded-pill bg-dark bg-opacity-75 text-white font-monospace px-3 py-1" th:text="${c.code}">CODE</span>
+                        </div>
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <span class="badge bg-success text-white px-3 py-1 rounded-pill fw-semibold shadow-sm" th:text="${c.difficulte}">Facile</span>
+                        </div>
+                    </div>
+                    <div class="p-4 d-flex flex-column flex-grow-1">
+                        <h4 class="fw-bold mb-2" style="font-family: var(--font-heading); color: var(--casa-green-deep);" th:text="${c.titre}">Titre</h4>
+                        <p class="text-secondary small mb-3 flex-grow-1" th:text="${c.description}">Description...</p>
+
+                        <!-- Sites et Patrimoines reliés au circuit (Consigne prof TP2) -->
+                        <div class="mb-3" th:if="${c.etapes != null and #lists.size(c.etapes) > 0}">
+                            <span class="text-muted small fw-bold d-block mb-1">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> Sites & Patrimoines visités :
+                            </span>
+                            <div class="d-flex flex-wrap gap-1">
+                                <a th:each="p : ${c.etapes}" th:href="@{/patrimoines/detail/{id}(id=${p.id})}" 
+                                   class="badge bg-light text-dark text-decoration-none border px-2 py-1 rounded-pill">
+                                    <i class="bi bi-pin-map-fill text-success me-1"></i> <span th:text="${p.nom}">Site</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-4 mb-4 text-muted small border-top border-bottom py-2">
+                            <div><i class="bi bi-clock me-1 text-danger"></i> <strong th:text="${c.dureeEstimeeMinutes} + ' min'">180 min</strong></div>
+                            <div><i class="bi bi-signpost-2 me-1 text-primary"></i> <strong th:text="${c.distanceKm} + ' km'">4.5 km</strong></div>
+                            <div><i class="bi bi-cash me-1 text-success"></i> <strong th:text="${#numbers.formatDecimal(c.tarifCircuit, 0, 'POINT', 0, 'POINT')} + ' FCFA'">5000 FCFA</strong></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <span class="text-success small fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> Circuit Certifié</span>
+                            <a th:href="@{/touriste/mes-reservations}" class="btn btn-casa-ochre btn-sm rounded-pill px-3">
+                                Réserver ce circuit <i class="bi bi-ticket-perforated ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.size(circuits) == 0 and !serviceIndisponible}" class="card border-0 shadow-sm p-5 text-center bg-white rounded-4">
+            <i class="bi bi-compass fs-1 text-muted mb-2"></i>
+            <h5 class="fw-bold text-secondary">Aucun circuit enregistré</h5>
+            <p class="text-muted mb-0">De nouveaux parcours sont en cours de balisage par les conservateurs municipaux.</p>
+        </div>
+
+    </main>
+
+    <div th:replace="~{fragments/layout :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
