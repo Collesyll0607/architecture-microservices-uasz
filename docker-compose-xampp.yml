@@ -1,5 +1,6 @@
 # =====================================================================
 # VARIANTE AVEC XAMPP MYSQL LOCAL (PORT 3306 SUR MACHINE HOTE)
+# Trinome : Colle SYLL (202300489) - Ndeye Thiamba FAYE (202300488) - Mame Faty DIOP (202101544)
 # =====================================================================
 
 services:
@@ -81,6 +82,21 @@ services:
       SERVER_PORT: 8084
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  frontend-angular:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/frontend-angular
+      dockerfile: Dockerfile
+    image: collesyll/frontend-angular:v1
+    container_name: frontend-angular-container
+    restart: on-failure
+    depends_on:
+      - ms-patrimoine
+      - ms-circuit
+      - ms-evenement
+      - ms-reservation
+    ports:
+      - "4200:80"
 
   patrimoine-touristique-web:
     build:

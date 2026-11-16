@@ -2,10 +2,10 @@
 chcp 65001 > nul
 cls
 echo =======================================================================
-echo   Arrêt des conteneurs du projet...
+echo   Arret propre du cluster microservices...
 echo =======================================================================
 cd ..
 docker compose down
 echo.
-echo Tous les conteneurs sont arrêtés proprement.
+echo Tous les conteneurs sont arretes.
 pause

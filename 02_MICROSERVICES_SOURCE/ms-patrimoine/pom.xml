@@ -51,6 +51,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Security Crypto (BCrypt pour lire et encoder les mots de passe de la table utilisateurs) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+
         <!-- Spring Boot Actuator (monitoring, endpoints de santé /actuator/health) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

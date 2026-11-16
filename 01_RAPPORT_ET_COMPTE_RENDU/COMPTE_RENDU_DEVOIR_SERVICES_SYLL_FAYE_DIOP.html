@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rapport de Devoir SOA — SYLL, FAYE, DIOP</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+  }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.35;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+  }
+  .cover {
+    text-align: center;
+    page-break-after: always;
+    padding-top: 10px;
+  }
+  .cover img.logo {
+    max-width: 92%;
+    height: auto;
+    margin-bottom: 18px;
+  }
+  .cover .annee {
+    font-weight: bold;
+    font-size: 12pt;
+    margin-bottom: 26px;
+  }
+  .cover .ue {
+    font-size: 13pt;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .cover .tp {
+    font-size: 11.5pt;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+  .sujet-box {
+    border: 1.5px solid #006633;
+    background-color: #F9FBF9;
+    padding: 22px 20px;
+    margin: 0 auto 36px auto;
+    width: 92%;
+  }
+  .sujet-box .label {
+    color: #006633;
+    font-weight: bold;
+    font-size: 13pt;
+    margin-bottom: 12px;
+  }
+  .sujet-box .titre {
+    font-weight: bold;
+    font-size: 15pt;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .sujet-box .stech {
+    font-style: italic;
+    font-size: 11pt;
+  }
+  table.meta {
+    width: 96%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 11pt;
+  }
+  table.meta td {
+    border: 1px solid #BFBFBF;
+    padding: 12px 14px;
+    vertical-align: top;
+    width: 50%;
+  }
+  h1 {
+    font-size: 14pt;
+    color: #006633;
+    border-bottom: 1px solid #006633;
+    padding-bottom: 3px;
+    margin-top: 22px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+  h2 {
+    font-size: 12.5pt;
+    color: #111111;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+  p {
+    text-align: justify;
+    margin: 0 0 8px 0;
+    text-indent: 8mm;
+  }
+  p.no-indent {
+    text-indent: 0;
+  }
+  table.arch {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px 0;
+    font-size: 10.5pt;
+    page-break-inside: avoid;
+  }
+  table.arch th, table.arch td {
+    border: 1px solid #999999;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  table.arch th {
+    background-color: #EAEAEA;
+    font-weight: bold;
+  }
+  .code-cap {
+    font-size: 10.5pt;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 10px;
+    margin-bottom: 3px;
+    text-indent: 0;
+    page-break-after: avoid;
+  }
+  pre {
+    background-color: #F7F7F7;
+    border: 1px solid #CCCCCC;
+    padding: 8px 10px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 9pt;
+    line-height: 1.25;
+    margin: 0 0 10px 0;
+    page-break-inside: avoid;
+    white-space: pre-wrap;
+  }
+  .fig {
+    text-align: center;
+    margin: 14px 0;
+    page-break-inside: avoid;
+  }
+  .fig img {
+    max-width: 94%;
+    border: 1px solid #CCCCCC;
+  }
+  .fig-leg {
+    font-size: 10.5pt;
+    font-style: italic;
+    margin-top: 4px;
+    text-indent: 0;
+  }
+  .sign {
+    text-align: right;
+    font-style: italic;
+    font-size: 10.5pt;
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <img class="logo" src="file:///c:/Users/user/OneDrive/Documents/SEMESTRE6/GENIE_LOGICIEL/RAPPORT_ILLUSTRATIONS/logo_uasz_entete.png" alt="Logo UASZ">
+  <div class="annee">Année universitaire 2025 – 2026</div>
+  <div class="ue">Module : Développement d'Applications Orientées Services (SOA)</div>
+  <div class="tp">Travaux Pratiques et Devoir de Synthèse (TP 1, TP 2 et TP 3)</div>
+
+  <div class="sujet-box">
+    <div class="label">RAPPORT DE DEVOIR</div>
+    <div class="titre">Mise en œuvre d'une architecture microservices pour la gestion du patrimoine touristique de Ziguinchor</div>
+    <div class="stech">Spring Boot, Spring Data JPA, DTO / MapStruct, OpenFeign, Angular et Docker</div>
+  </div>
+
+  <table class="meta">
+    <tr>
+      <td>
+        <strong>Réalisé par :</strong><br><br>
+        - <strong>Collé SYLL</strong> (Matricule : 202300489)<br>
+        - <strong>Ndeye Thiamba FAYE</strong> (Matricule : 202300488)<br>
+        - <strong>Mame Faty DIOP</strong> (Matricule : 202101544)
+      </td>
+      <td>
+        <strong>Enseignant responsable :</strong><br><br>
+        <strong>Dr Lamine FATY</strong><br>
+        Enseignant-Chercheur<br>
+        Département d'Informatique<br>
+        UFR Sciences &amp; Technologies — UASZ
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h1>Introduction</h1>
+<p>
+Ce document présente le travail réalisé dans le cadre du devoir du module Développement d'Applications Orientées Services en Licence 3 Ingénierie Informatique (L2I). L'objectif du sujet est de construire une application distribuée reposant sur une architecture microservices pour gérer et valoriser les sites patrimoniaux, les circuits touristiques, les événements culturels et les réservations de visites dans la commune de Ziguinchor et en Basse-Casamance.
+</p>
+<p>
+Le travail demandé s'appuie sur l'enchaînement des trois fiches de travaux pratiques vues en cours : la mise en place de la couche de persistance avec Spring Data JPA (TP 1), l'encapsulation des échanges par objets de transfert (DTO), le mapping automatique avec MapStruct et la communication synchrone inter-services via Spring Cloud OpenFeign (TP 2), puis la conteneurisation de l'ensemble des services et de l'interface cliente sous Docker et Docker Compose (TP 3).
+</p>
+
+<h1>1. Architecture générale de l'application</h1>
+<h2>1.1. Découpage en microservices</h2>
+<p>
+Plutôt que de regrouper l'ensemble des traitements dans une seule archive monolithique, le domaine métier a été réparti en quatre microservices Spring Boot distincts et une application cliente Angular. Chaque service gère son propre périmètre fonctionnel et expose une API REST consommée en JSON.
+</p>
+
+<table class="arch">
+  <thead>
+    <tr>
+      <th>Composant</th>
+      <th>Port</th>
+      <th>Responsabilité fonctionnelle</th>
+      <th>Socle technique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ms-patrimoine</strong></td>
+      <td>8081</td>
+      <td>Gestion du référentiel des sites patrimoniaux (localisation GPS, historique, capacité).</td>
+      <td>Spring Boot 3, Spring Data JPA, MySQL</td>
+    </tr>
+    <tr>
+      <td><strong>ms-circuit</strong></td>
+      <td>8082</td>
+      <td>Gestion des circuits touristiques, des étapes ordonnées et récupération des sites via OpenFeign.</td>
+      <td>Spring Boot 3, OpenFeign, MapStruct</td>
+    </tr>
+    <tr>
+      <td><strong>ms-evenement</strong></td>
+      <td>8083</td>
+      <td>Programmation des événements culturels, gestion du nombre de places et des tarifs.</td>
+      <td>Spring Boot 3, Spring Data JPA, MySQL</td>
+    </tr>
+    <tr>
+      <td><strong>ms-reservation</strong></td>
+      <td>8084</td>
+      <td>Enregistrement des réservations, génération du pass QR et suivi des paiements.</td>
+      <td>Spring Boot 3, Spring Data JPA, MySQL</td>
+    </tr>
+    <tr>
+      <td><strong>frontend-angular</strong></td>
+      <td>4200</td>
+      <td>Interface web destinée aux trois profils : Touriste, Guide et Conservateur.</td>
+      <td>Angular 17, TypeScript, Bootstrap 5</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>1.2. Base de données et persistance (TP 1)</h2>
+<p>
+Les données sont stockées dans le schéma MySQL <code>patrimoinedb</code> encodé en <code>utf8mb4</code>. Dans chaque microservice, les classes entités sont annotées avec <code>@Entity</code> et manipulées à travers des interfaces héritant de <code>JpaRepository</code>. Ce choix permet de déléguer à Hibernate la génération des requêtes SQL standards ainsi que la gestion des transactions.
+</p>
+
+<h1>2. Structuration par DTO, MapStruct et OpenFeign (TP 2)</h1>
+<h2>2.1. Séparation entre entités JPA et objets de transfert (DTO)</h2>
+<p>
+Exposer directement les entités JPA sur les contrôleurs REST pose deux problèmes classiques : le couplage de l'API publique au schéma physique des tables et les erreurs de sérialisation cyclique sur les relations bidirectionnelles (notamment entre <code>Circuit</code> et <code>EtapeCircuit</code>). Pour éviter cela, chaque microservice utilise des classes DTO dédiées et un mapper MapStruct compilé.
+</p>
+
+<div class="code-cap">Extrait 1 : Interface de mapping MapStruct dans ms-circuit (CircuitMapper.java)</div>
+<pre>@Mapper(componentModel = "spring")
+public interface CircuitMapper {
+    CircuitDTO toDTO(Circuit entity);
+    Circuit toEntity(CircuitDTO dto);
+
+    EtapeCircuitDTO toEtapeDTO(EtapeCircuit entity);
+    EtapeCircuit toEtapeEntity(EtapeCircuitDTO dto);
+}</pre>
+
+<h2>2.2. Communication inter-services avec Spring Cloud OpenFeign</h2>
+<p>
+Un circuit touristique est composé d'une suite d'étapes faisant chacune référence à un site patrimonial par son identifiant (<code>patrimoineId</code>). Lorsqu'un utilisateur consulte un circuit sur <code>ms-circuit</code> (port 8082), ce service interroge <code>ms-patrimoine</code> (port 8081) via le client déclaratif <code>PatrimoineFeignClient</code> afin de compléter chaque étape avec les informations du site correspondant.
+</p>
+
+<div class="code-cap">Extrait 2 : Client déclaratif OpenFeign (PatrimoineFeignClient.java)</div>
+<pre>@FeignClient(name = "ms-patrimoine", url = "${ms.patrimoine.url:http://localhost:8081}")
+public interface PatrimoineFeignClient {
+
+    @GetMapping("/api/patrimoines/{id}")
+    PatrimoineDTO getPatrimoineById(@PathVariable("id") Long id);
+
+    @GetMapping("/api/patrimoines")
+    List&lt;PatrimoineDTO&gt; getAllPatrimoines();
+}</pre>
+
+<h1>3. Conteneurisation et déploiement avec Docker (TP 3)</h1>
+<p>
+Conformément aux consignes du TP 3, chaque microservice possède son fichier <code>Dockerfile</code> basé sur l'image <code>eclipse-temurin:21-jdk</code>. Le client Angular est compilé puis servi par un conteneur Nginx (<code>nginx:alpine</code>) qui assure également le routage des requêtes <code>/api/*</code> vers les microservices concernés. L'orchestration globale est décrite dans le fichier <code>docker-compose.yml</code> à la racine du projet.
+</p>
+
+<div class="code-cap">Extrait 3 : Déclaration des services dans docker-compose.yml</div>
+<pre>services:
+  ms-patrimoine:
+    build: ./ms-patrimoine
+    image: collesyll/patrimoines:v1
+    ports: ["8081:8081"]
+
+  ms-circuit:
+    build: ./ms-circuit
+    image: collesyll/circuits:v1
+    ports: ["8082:8082"]
+    environment:
+      - MS_PATRIMOINE_URL=http://ms-patrimoine:8081
+    depends_on: [ms-patrimoine]</pre>
+
+<h1>4. Présentation des écrans principaux de l'application</h1>
+<p>
+Les figures ci-dessous présentent les principales vues de l'application web développée pour exploiter les quatre microservices.
+</p>
+
+<h2>4.1. Page d'accueil et catalogue des sites</h2>
+<p>
+La page d'accueil (Figure 1) propose une recherche rapide par mot-clé et donne un aperçu direct des sites patrimoniaux, des circuits et des événements culturels récupérés auprès des microservices. La vue du catalogue (Figure 2) permet de filtrer les huit sites répertoriés à Ziguinchor et en Basse-Casamance selon leur catégorie (historique, religieux, naturel ou culturel) et d'afficher leur localisation sur la carte.
+</p>
+
+<div class="fig">
+  <img src="file:///c:/Users/user/OneDrive/Documents/SEMESTRE6/GENIE_LOGICIEL/RAPPORT_ILLUSTRATIONS/capture_1_accueil.png" alt="Page d'accueil">
+  <div class="fig-leg">Figure 1 : Page d'accueil du portail Ziguinchor Tourisme.</div>
+</div>
+
+<div class="fig">
+  <img src="file:///c:/Users/user/OneDrive/Documents/SEMESTRE6/GENIE_LOGICIEL/RAPPORT_ILLUSTRATIONS/capture_2_catalogue_sites.png" alt="Catalogue des sites">
+  <div class="fig-leg">Figure 2 : Catalogue des sites patrimoniaux alimenté par ms-patrimoine.</div>
+</div>
+
+<h2>4.2. Espace Touriste et Tableau de bord du Conservateur</h2>
+<p class="no-indent">
+Les droits d'accès sont différenciés selon le rôle de l'utilisateur connecté :
+</p>
+<p class="no-indent">
+- <strong>Le Touriste :</strong> dispose d'un espace dédié (Figure 3) regroupant ses réservations, son billet numérique avec QR Code (vérifiable hors-ligne par le guide), le règlement par Wave ou Orange Money, ainsi que la possibilité de déposer un avis ou de signaler un litige à l'issue d'une visite.
+</p>
+<p class="no-indent">
+- <strong>Le Guide :</strong> consulte uniquement son planning de créneaux horaires et la liste des visites qui lui ont été assignées, avec la possibilité de marquer une visite comme terminée.
+</p>
+<p class="no-indent">
+- <strong>Le Conservateur :</strong> accède au tableau de bord d'administration (Figure 4) lui permettant de superviser les effectifs, de valider les candidatures de guides, de planifier une visite en sélectionnant un site et un guide habilité, de traiter les litiges et de suspendre un compte utilisateur en cas de manquement.
+</p>
+
+<div class="fig">
+  <img src="file:///c:/Users/user/OneDrive/Documents/SEMESTRE6/GENIE_LOGICIEL/RAPPORT_ILLUSTRATIONS/capture_3_espace_touriste.png" alt="Espace Touriste">
+  <div class="fig-leg">Figure 3 : Espace Touriste — suivi des réservations, pass QR et médiation.</div>
+</div>
+
+<div class="fig">
+  <img src="file:///c:/Users/user/OneDrive/Documents/SEMESTRE6/GENIE_LOGICIEL/RAPPORT_ILLUSTRATIONS/capture_4_dashboard_conservateur.png" alt="Dashboard Conservateur">
+  <div class="fig-leg">Figure 4 : Tableau de bord du Conservateur — indicateurs et planification des visites.</div>
+</div>
+
+<h1>Conclusion</h1>
+<p>
+Ce devoir nous a permis de mettre en pratique l'ensemble de la chaîne de conception d'une application orientée services : modélisation des entités JPA, isolation de la couche d'exposition par DTO et MapStruct, appels synchrones inter-services avec OpenFeign et déploiement multi-conteneurs sous Docker. Le découpage retenu facilite la maintenance de chaque brique tout en offrant une interface cohérente aux différents acteurs du tourisme local.
+</p>
+
+<div class="sign">
+  Fait à Ziguinchor, Année universitaire 2025 – 2026<br>
+  Collé SYLL (202300489) — Ndeye Thiamba FAYE (202300488) — Mame Faty DIOP (202101544)
+</div>
+
+</body>
+</html>

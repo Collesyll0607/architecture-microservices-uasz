@@ -1,14 +1,12 @@
 # =====================================================================
-# DOCKER-COMPOSE OFFICIEL (100% AUTONOME AVEC BASE DE DONNÉES INCLUSE)
-# Module : Développement d'Applications Orientées Services
+# DOCKER-COMPOSE OFFICIEL (AUTONOME AVEC BASE DE DONNEES ET FRONTEND ANGULAR)
+# Module : Developpement d'Applications Orientees Services
 # Enseignant : Dr Lamine FATY
-# Binôme : Collé SYLL (202300489) & Ndeye Thiamba FAYE (202300488)
+# Trinome : Colle SYLL (202300489) - Ndeye Thiamba FAYE (202300488) - Mame Faty DIOP (202101544)
 # =====================================================================
 
 services:
-  # -------------------------------------------------------------------
-  # 0. Base de données MySQL 8.0 auto-initialisée
-  # -------------------------------------------------------------------
+  # 0. Base de donnees MySQL 8.0 auto-initialisee avec donnees UTF-8
   patrimoine-db:
     image: mysql:8.0
     container_name: patrimoine-mysql-db
@@ -17,7 +15,7 @@ services:
       MYSQL_DATABASE: patrimoinedb
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - "3307:3306" # Port 3307 sur l'hôte pour éviter tout conflit avec un XAMPP existant
+      - "3307:3306" # Port 3307 sur l'hote pour eviter conflit avec XAMPP local
     volumes:
       - ./03_BASE_DE_DONNEES/init_clean_utf8_data.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
@@ -26,9 +24,7 @@ services:
       timeout: 5s
       retries: 15
 
-  # -------------------------------------------------------------------
   # 1. Microservice ms-patrimoine (TP 2 & TP 3 - DTO & MapStruct)
-  # -------------------------------------------------------------------
   ms-patrimoine:
     build:
       context: ./02_MICROSERVICES_SOURCE/ms-patrimoine
@@ -48,9 +44,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ""
       SERVER_PORT: 8081
 
-  # -------------------------------------------------------------------
-  # 2. Microservice ms-circuit (OpenFeign vers ms-patrimoine)
-  # -------------------------------------------------------------------
+  # 2. Microservice ms-circuit (TP 2 & TP 3 - OpenFeign vers ms-patrimoine)
   ms-circuit:
     build:
       context: ./02_MICROSERVICES_SOURCE/ms-circuit
@@ -73,9 +67,7 @@ services:
       SERVER_PORT: 8082
       MS_PATRIMOINE_URL: http://ms-patrimoine:8081
 
-  # -------------------------------------------------------------------
   # 3. Microservice ms-evenement
-  # -------------------------------------------------------------------
   ms-evenement:
     build:
       context: ./02_MICROSERVICES_SOURCE/ms-evenement
@@ -95,9 +87,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ""
       SERVER_PORT: 8083
 
-  # -------------------------------------------------------------------
   # 4. Microservice ms-reservation
-  # -------------------------------------------------------------------
   ms-reservation:
     build:
       context: ./02_MICROSERVICES_SOURCE/ms-reservation
@@ -108,12 +98,6 @@ services:
     depends_on:
       patrimoine-db:
         condition: service_healthy
-      ms-patrimoine:
-        condition: service_started
-      ms-circuit:
-        condition: service_started
-      ms-evenement:
-        condition: service_started
     ports:
       - "8084:8084"
       - "3004:8084"
@@ -123,9 +107,23 @@ services:
       SPRING_DATASOURCE_PASSWORD: ""
       SERVER_PORT: 8084
 
-  # -------------------------------------------------------------------
-  # 5. Application Web Frontend Touriste & Conservateur
-  # -------------------------------------------------------------------
+  # 5. Frontend Angular 17 (Exigence Professeur)
+  frontend-angular:
+    build:
+      context: ./02_MICROSERVICES_SOURCE/frontend-angular
+      dockerfile: Dockerfile
+    image: collesyll/frontend-angular:v1
+    container_name: frontend-angular-container
+    restart: on-failure
+    depends_on:
+      - ms-patrimoine
+      - ms-circuit
+      - ms-evenement
+      - ms-reservation
+    ports:
+      - "4200:80"
+
+  # 6. Portail Web Historique Spring Boot / Thymeleaf
   patrimoine-touristique-web:
     build:
       context: ./02_MICROSERVICES_SOURCE/patrimoine-touristique-web
@@ -136,10 +134,6 @@ services:
     depends_on:
       patrimoine-db:
         condition: service_healthy
-      ms-patrimoine:
-        condition: service_started
-      ms-circuit:
-        condition: service_started
     ports:
       - "8080:8080"
     environment:
@@ -147,3 +141,5 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ""
       SERVER_PORT: 8080
+      MS_CIRCUIT_URL: http://ms-circuit:8082
+      MS_EVENEMENT_URL: http://ms-evenement:8083

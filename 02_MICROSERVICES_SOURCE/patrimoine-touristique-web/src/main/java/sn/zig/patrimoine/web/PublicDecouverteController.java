@@ -20,12 +20,18 @@ public class PublicDecouverteController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @org.springframework.beans.factory.annotation.Value("${ms.circuit.url:http://ms-circuit:8082}")
+    private String msCircuitUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${ms.evenement.url:http://ms-evenement:8083}")
+    private String msEvenementUrl;
+
     @GetMapping("/circuits")
     public String listeCircuits(Model model) {
         List<Map<String, Object>> circuits = new ArrayList<>();
         try {
             ResponseEntity<List<Map<String, Object>>> resp = restTemplate.exchange(
-                    "http://localhost:8082/api/circuits",
+                    msCircuitUrl + "/api/circuits",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {}
@@ -45,7 +51,7 @@ public class PublicDecouverteController {
         List<Map<String, Object>> evenements = new ArrayList<>();
         try {
             ResponseEntity<List<Map<String, Object>>> resp = restTemplate.exchange(
-                    "http://localhost:8083/api/evenements",
+                    msEvenementUrl + "/api/evenements",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<Map<String, Object>>>() {}
